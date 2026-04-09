@@ -24,9 +24,10 @@ In `serial_matmul` directory
 # Make and enter your build directory
 % mkdir -p build && cd build
 # Compile your executable (elaborate module 'top' as root)
-% iverilog -s top -g2012 -Wall -Wno-sensitivity-entire-vector -Wno-sensitivity-entire-array -o asic-exe -I ../../../lib/vc -I ../../../lib/sm -I ../../../lib/proc -I ../rtl -I ../tb ../tb/asic.t.v
+build % iverilog -s top -g2012 -Wall -Wno-sensitivity-entire-vector -Wno-sensitivity-entire-array -o asic-exe -I ../../../lib/vc -I ../../../lib/sm -I ../../../lib/proc -I ../rtl -I ../tb ../tb/asic.t.v
 # Run a test case
-% ./asic-exe +verbose=1 +trace=1 +test-case=1 
+build % ./asic-exe +verbose=1 +trace=1 +test-case=1 
+Have fun.
 ```
 ### Using Makefile
 In `serial_matmul/tb`
@@ -54,7 +55,7 @@ resp                                     req
 
 SRC ------------cmd_valid_i-----------> ASIC --------resp_valid_o---------> SNK
 SRC <-----------cmd_ready_o------------ ASIC <-------resp_ready_i---------- SNK
-SRC ->src_msg->,                    .-> ASIC ->,              ,->sink_msg-> SNK
+SRC ->src_msg->,                    ,-> ASIC ->,              ,->sink_msg-> SNK
                |-> cmd_rs2_i        |          |resp_rd_o --->|
                |-> cmd_rs1_i        |          'resp_data_o ->'                   
                |-> cmd_inst_funct_i |     

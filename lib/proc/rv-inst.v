@@ -158,7 +158,8 @@ module rv64_InstTasks();
     asm_fmt_r[`RV64_INST_RS2]    = rs2;
   end
   endfunction
-
+  
+  // command instr format only specifies opcode and funct7
   function [`RV64_INST_NBITS-1:0] asm_fmt_cmd
   (
     input [`RV64_INST_FUNCT7_NBITS-1:0] f7,
@@ -228,7 +229,7 @@ module rv64_InstTasks();
 
   reg [6:0]  op;
   reg [6:0]  f7;
-  
+  // Verilog return variable is same as function name
   function [`RV64_INST_NBITS-1:0] asm
   (
     input  [31:0]                 pc,
@@ -248,7 +249,6 @@ module rv64_InstTasks();
     ra  = 5'bx;
     rb  = 5'bx;
     rc  = 5'bx;
-
   end
   endfunction
 
