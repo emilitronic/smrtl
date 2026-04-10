@@ -29,8 +29,7 @@
 // Test Harness Module
 //------------------------------------------------------------------------
 
-module TestHarness
-#(
+module TestHarness#(
   parameter p_num_msgs = 2*1024
 )(
   input  logic clk,
@@ -39,7 +38,6 @@ module TestHarness
   input  logic [31:0] ctrl_snk_max_delay,
   input  logic [31:0] data_src_max_delay,
   input  logic [31:0] data_snk_max_delay,
-  input  logic [`LPVX_B-1:0] logpost_vecs,
   output logic done
 );
 
@@ -71,8 +69,7 @@ module TestHarness
   // Control source
   //----------------------------------------------------------------------
 
-  vc_TestRandDelaySource
-  #(
+  vc_TestRandDelaySource#(
     .p_msg_nbits ( `ASIC_CTRL_MSG_NBITS ),
     .p_num_msgs  ( p_num_msgs           )
   )
@@ -91,8 +88,7 @@ module TestHarness
   // Data source
   //----------------------------------------------------------------------
 
-  vc_TestRandDelaySource
-  #(
+  vc_TestRandDelaySource#(
     .p_msg_nbits ( `ASIC_DATA_MSG_NBITS ),
     .p_num_msgs  ( p_num_msgs           )
   )
@@ -132,16 +128,13 @@ module TestHarness
     .data_snk_rdy_i ( data_snk_rdy ),
     .data_snk_msg_o ( data_snk_msg ),
 
-    // Program/setup input
-    .logpost_vecs   ( logpost_vecs )
   );
 
   //----------------------------------------------------------------------
   // Control sink
   //----------------------------------------------------------------------
 
-  vc_TestRandDelaySink
-  #(
+  vc_TestRandDelaySink#(
     .p_msg_nbits ( `ASIC_CTRL_MSG_NBITS ),
     .p_num_msgs  ( p_num_msgs           )
   )
@@ -160,8 +153,7 @@ module TestHarness
   // Data sink
   //----------------------------------------------------------------------
 
-  vc_TestRandDelaySink
-  #(
+  vc_TestRandDelaySink#(
     .p_msg_nbits ( `ASIC_DATA_MSG_NBITS ),
     .p_num_msgs  ( p_num_msgs           )
   )
@@ -218,8 +210,6 @@ module top;
 
   integer sim_num_cycles;
 
-  logic [`LPVX_B-1:0] logpost_vecs;
-
   TestHarness th
   (
     .clk                ( clk                   ),
@@ -228,7 +218,6 @@ module top;
     .ctrl_snk_max_delay ( th_ctrl_snk_max_delay ),
     .data_src_max_delay ( th_data_src_max_delay ),
     .data_snk_max_delay ( th_data_snk_max_delay ),
-    .logpost_vecs       ( logpost_vecs          ),
     .done               ( th_done               )
   );
 
@@ -395,7 +384,7 @@ module top;
   // Helper task to run test
   //----------------------------------------------------------------------
 
-  task run_test;
+  task run_test();
   begin
     #1;   th_reset = 1'b1;
     #20;  th_reset = 1'b0;
