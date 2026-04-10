@@ -6,9 +6,9 @@
 // Notes:
 // Our exectuable has "-test" suffix, since VC_TEST_SUITE_BEGIN expects this
 // 
-// SRC ---> UNPACK ---> DECODER -> PACK -> SNK
-//                      |     |
-// MEM resp -> UNPACK --+     +--> PACK -> MEM req
+// SRC ---> UNPACK ---> PIPE -> PACK -> SNK
+//                      |  |
+// MEM resp -> UNPACK --+  +--> PACK -> MEM req
 //
 
 `include "vc-TestRandDelaySource.v"
@@ -24,8 +24,7 @@
 // Helper Module
 //------------------------------------------------------------------------
 
-module TestHarness
-#(
+module TestHarness#(
   parameter p_mem_nbytes  = 1 << 16, // size of physical memory in bytes
   parameter p_num_msgs    = 1024
 )(
@@ -37,21 +36,20 @@ module TestHarness
   input  logic [31:0] sink_max_delay,  
   output logic done
 );
-
   // Local parameters
   localparam c_req_msg_nbits  = `SM_MEM_REQ_MSG_NBITS(8,40,64);
   localparam c_resp_msg_nbits = `SM_MEM_RESP_MSG_NBITS(8,40,64);
-  localparam c_opaque_nbits   = 8;
+  localparam c_opaque_nbits   =  8;
   localparam c_data_nbits     = 64;   // size of mem message data in bits
   localparam c_addr_nbits     = 40;   // size of mem message address in bits
 
   // wires
-  logic [2*`ASIC_SRC_MSG_NBITS+32-1:0] src_msg;
+  logic [2*`ASIC_SRC_MSG_NBITS+32-1:0] src_msg; // 2*rs + cmd inst from src
   logic                                src_val;
   logic                                src_rdy;
   logic                                src_done;
 
-  logic [5+`ASIC_SNK_MSG_NBITS-1:0] sink_msg; // hack (also in sink & load_to_mngr & init_sink)
+  logic [5+`ASIC_SNK_MSG_NBITS-1:0] sink_msg;   // hack (also in sink & load_to_mngr & init_sink)
   logic                             sink_val;
   logic                             sink_rdy;
   logic                             sink_done;
@@ -60,12 +58,10 @@ module TestHarness
   // PROC src
   //----------------------------------------------------------------------
   // src signal is {cmd.bits.rs2, cmd.bits.rs1, cmd.bits.inst}
-  vc_TestRandDelaySource
-  #(
+  vc_TestRandDelaySource#(
     .p_msg_nbits       (2*`ASIC_SRC_MSG_NBITS+32),
     .p_num_msgs        (p_num_msgs)
-  )
-  src
+  ) src
   (
     .clk       (clk),
     .reset     (reset),
@@ -110,8 +106,7 @@ module TestHarness
   logic                        memresp_rdy;
   logic [c_resp_msg_nbits-1:0] memresp_msg;
 
-  sm_TestRandDelayMem_1port
-  #(p_mem_nbytes, c_opaque_nbits, c_addr_nbits, c_data_nbits) mem
+  sm_TestRandDelayMem_1port#(p_mem_nbytes, c_opaque_nbits, c_addr_nbits, c_data_nbits) mem
   (
     .clk         (clk),
     .reset       (reset),
@@ -206,16 +201,13 @@ module TestHarness
     .resp_ready_i (sink_rdy)
   );
 
-
   //----------------------------------------------------------------------
   // PROC snk
   //----------------------------------------------------------------------
-  vc_TestRandDelaySink
-  #(
+  vc_TestRandDelaySink#(
     .p_msg_nbits       (5+`ASIC_SNK_MSG_NBITS),
     .p_num_msgs        (p_num_msgs)
-  )
-  sink
+  ) sink
   (
     .clk       (clk),
     .reset     (reset),
@@ -341,7 +333,7 @@ module top;
   //----------------------------------------------------------------------
   // clear_mem: clear the contents of memory and test sources and sinks
   //----------------------------------------------------------------------
-  task clear_mem;
+  task clear_mem();
   begin
     #1;   th_mem_clear = 1'b1;
     #20;  th_mem_clear = 1'b0;
@@ -361,7 +353,6 @@ module top;
   (
     // input logic [31:0] data
     input logic [5+`ASIC_SNK_MSG_NBITS-1:0] data
-
   );
   begin
     load_to_mngr( th_sink_idx, data );
@@ -455,7 +446,7 @@ module top;
   //----------------------------------------------------------------------
   // verify: verify the outputs
   //----------------------------------------------------------------------
-  task verify;
+  task verify();
   begin
     // set the address to the beginning of the destination
     th_addr = ref_addr;
@@ -530,7 +521,7 @@ module top;
   //----------------------------------------------------------------------
   // Helper task to run test
   //----------------------------------------------------------------------
-  task run_test;
+  task run_test();
   begin
     #1;   th_reset = 1'b1;
     #20;  th_reset = 1'b0;
