@@ -20,7 +20,7 @@ $(EXE_DIR):
 
 build: $(EXE_DIR)
 ifeq ($(SIM),iverilog)
-	iverilog -g2012 \
+	@iverilog -g2012 \
 	  -Wall -Wno-sensitivity-entire-vector -Wno-sensitivity-entire-array \
 	  $(INCLUDES) \
 	  -s $(TOP) \

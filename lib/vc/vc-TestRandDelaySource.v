@@ -81,8 +81,8 @@ module vc_TestRandDelaySource
 
   `VC_TRACE_BEGIN
   begin
-    // $sformat( msg_str, "%x", msg ); // SEBASTIAN
-    $sformat( msg_str, "%3d %3d %3d %3d", msg[63:48],msg[47:32],msg[31:16],msg[15:0] );  // SEBASTIAN NEW FOR DecPipe.v
+    $sformat( msg_str, "%x", msg ); // SEBASTIAN
+    // $sformat( msg_str, "%3d %3d %3d %3d", msg[63:48],msg[47:32],msg[31:16],msg[15:0] );  // SEBASTIAN NEW FOR DecPipe.v
     vc_trace.append_val_rdy_str( trace_str, val, rdy, msg_str );
   end
   `VC_TRACE_END
