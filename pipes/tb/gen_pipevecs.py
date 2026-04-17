@@ -32,10 +32,19 @@ def render_vector_lines(stages: int, count: int, output: Path) -> str:
     lines.append(f"// Generated at : {timestamp}")
     lines.append("")
 
+    lines.append("// Control program")
+    lines.append("init_ctrl_src( 32'h0000_0000 ); // start word")
+    lines.append(f"init_ctrl_src( 32'd{count} ); // number of inputs to process")
+    lines.append("init_ctrl_snk( 32'h0000_0001 ); // done word")
+    lines.append("")
+
+    lines.append("// Data source vectors")
     for idx in range(count):
         src = make_msg(idx)
         lines.append(f"init_data_src( 64'h{src:016x} );")
     lines.append("")
+
+    lines.append("// Expected data sink vectors")
     for idx in range(count):
         src = make_msg(idx)
         snk = src + stages

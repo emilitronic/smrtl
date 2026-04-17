@@ -17,6 +17,8 @@
 *.sdf
 *.mapped.v
 *.svf
+generated/
+pipes/tb/generated/
 
 # Build directories
 build*/

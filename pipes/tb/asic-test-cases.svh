@@ -12,20 +12,9 @@ send a data sequence (of known length) to DUT
 // Basic tests
 //------------------------------------------------------------------------
 
-localparam [31:0] c_num_pipe_stages = 32'd1;
-localparam [31:0] c_num_test_vecs   = 32'd3;
-
 task pipevecs_1_3;
 begin
   `include "generated/current_pipevecs.svh"
-end
-endtask
-
-task input_program;
-begin
-  init_ctrl_src( 32'h0000_0000 ); // start word
-  init_ctrl_src( c_num_test_vecs ); // number of inputs to process
-  init_ctrl_snk( 32'h0000_0001 ); // what the sink expects to see
 end
 endtask
 
@@ -37,7 +26,6 @@ endtask
 begin
   clear_streams();
   init_rand_delays( 0, 0, 0, 0 ); // no random delays
-  input_program();
   pipevecs_1_3();
   run_test();
 end
