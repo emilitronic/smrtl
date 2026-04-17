@@ -61,3 +61,30 @@ In `pipes/tb`
 # customize
 % make run RUN_ARGS='+test-case=1 +dump-vcd'
 ```
+
+### What You'll See
+```bash
+# when making a new set of test vectors
+$ make gen PIPE_COUNT=50             
+python3 gen_pipevecs.py --stages 1 --count 50 --output generated/pipevecs_1_50.svh
+cp generated/pipevecs_1_50.svh generated/current_pipevecs.svh
+# when running a test case
+$ make trace RUN_ARGS='+test-case=1'
+../build/asic-exe +test-case=1 +trace=1
+
+ Test Suite: pipe01
+  + Test Case 1: 2-stage pipe, no random delays
+   0:          || .                > i:0000	 :00/00 n:02 stg:----|stg:---- > .        || .               
+   1: 00000000 || #                > start	 :00/00 n:02 stg:----|stg:---- >          ||                 
+   2: 00000003 || #                > nt:0003	 :00/00 n:02 stg:----|stg:---- >          ||                 
+   3: .        || 0000000000000011 > un:0003	 :00/03 n:02 stg:----|stg:---- >          ||                 
+   4: .        || 0000000000000022 > un:0003	 :00/03 n:02 stg:0012|stg:---- >          ||                 
+   5: .        || 0000000000000033 > un:0003	 :00/03 n:02 stg:0023|stg:0013 >          || 0000000000000013
+   6: .        ||                  > un:0003	 :01/03 n:02 stg:0034|stg:0024 >          || 0000000000000024
+   7: .        ||                  > un:0003	 :02/03 n:02 stg:----|stg:0035 >          || 0000000000000035
+   8: .        || .                > done	 :03/03 n:02 stg:----|stg:---- > 00000001 || .               
+
+./asic-test-harness.v:411: $finish called at 180 (1s)
+```
+
+(c) Sebastian Claudiusz Magierowski
