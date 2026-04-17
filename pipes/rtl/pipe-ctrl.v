@@ -30,26 +30,49 @@ module pipe_ctrl
   output logic [31:0] ctrl_snk_msg_o
 );
 
-  logic        resp_pending;
+  localparam [0:0] c_state_idle = 1'b0;
+  localparam [0:0] c_state_resp = 1'b1;
+
+  logic [0:0]  state_reg;
+  logic [0:0]  state_next;
   logic [31:0] last_cmd;
 
-  assign ctrl_src_rdy_o = !resp_pending;
-  assign ctrl_snk_val_o = resp_pending;
+  // State transition logic
+  always @(*) begin
+    state_next = state_reg;
+
+    case ( state_reg )
+      c_state_idle: begin
+        if ( ctrl_src_val_i )
+          state_next = c_state_resp;
+      end
+
+      c_state_resp: begin
+        if ( ctrl_snk_rdy_i )
+          state_next = c_state_idle;
+      end
+
+      default: begin
+        state_next = c_state_idle;
+      end
+    endcase
+  end
+
+  assign ctrl_src_rdy_o = ( state_reg == c_state_idle );
+  assign ctrl_snk_val_o = ( state_reg == c_state_resp );
   assign ctrl_snk_msg_o = 32'd1;
 
+  // State
   always @( posedge clk ) begin
     if ( reset ) begin
-      resp_pending <= 1'b0;
-      last_cmd     <= 32'b0;
+      state_reg <= c_state_idle;
+      last_cmd  <= 32'b0;
     end
     else begin
-      if ( ctrl_src_val_i && ctrl_src_rdy_o ) begin
-        resp_pending <= 1'b1;
-        last_cmd     <= ctrl_src_msg_i;
-      end
-      else if ( ctrl_snk_val_o && ctrl_snk_rdy_i ) begin
-        resp_pending <= 1'b0;
-      end
+      state_reg <= state_next;
+
+      if ( ctrl_src_val_i && ctrl_src_rdy_o )
+        last_cmd <= ctrl_src_msg_i;
     end
   end
 
@@ -63,7 +86,7 @@ module pipe_ctrl
       $sformat( state_str, "a:%x", ctrl_src_msg_i[15:0] );
       vc_trace.append_str( trace_str, state_str );
     end
-    else if ( ctrl_snk_val_o ) begin
+    else if ( state_reg == c_state_resp ) begin
       vc_trace.append_str( trace_str, "done" );
     end
     else begin

@@ -22,6 +22,8 @@
 build*/
 *-syn/
 *-par/
+tags
+.slang/
 
 # OS
 .DS_Store
