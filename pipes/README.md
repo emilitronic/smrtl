@@ -48,6 +48,10 @@ In `pipes/tb`
 % make run
 # maybe you want to try different test cases
 % make run RUN_ARGS='+test-case=1'
+# or try all test cases
+% make run RUN_ARGS='+test-case'
+# or even simpler, run all test cases with
+% make run RUN_ARGS=
 # adds +verbose=1
 % make runv
 # adds +trace=1

@@ -14,7 +14,7 @@ INCLUDES := -I $(VC_DIR) -I $(SM_DIR) -I $(PROC_DIR) -I ../rtl -I .
 SRC_TOP  := asic.t.v
 RUN_ARGS ?= +test-case=1
 GEN_DIR  := generated
-PIPE_STAGES ?= 1
+PIPE_STAGES ?= 2
 PIPE_COUNT  ?= 3
 PIPEVECS := $(GEN_DIR)/pipevecs_$(PIPE_STAGES)_$(PIPE_COUNT).svh
 PIPEVECS_CURRENT := $(GEN_DIR)/current_pipevecs.svh
