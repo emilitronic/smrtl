@@ -26,20 +26,28 @@ The intent is to begin from a very small scaffold and add:
 one piece at a time.
 
 ```
-________                           ______                             ________
-        |------ctrl_src_val------>|      |--------ctrl_snk_val------>|
-ctrl_src|<-----ctrl_src_rdy-------|      |<-------ctrl_snk_rdy-------|ctrl_snk 
-        |------ctrl_src_msg------>|      |--------ctrl_snk_msg------>|        
---------'                         | ASIC |                           |--------'
-        |------data_src_val------>|      |--------data_snk_val------>|
-data_src|<-----data_src_rdy-------|      |<-------data_snk_rdy-------|data_snk
-        |------data_src_msg------>|      |--------data_snk_msg------>|  
---------'                         `------'                           `--------'          
+________                       ______                         ________
+        |----ctrl_src_val---->|      |------ctrl_snk_val---->|
+ctrl_src|<---ctrl_src_rdy-----|      |<-----ctrl_snk_rdy-----|ctrl_snk 
+        |----ctrl_src_msg---->|      |------ctrl_snk_msg---->|        
+--------'                     | ASIC |                       |--------'
+        |----data_src_val---->|      |------data_snk_val---->|
+data_src|<---data_src_rdy-----|      |<-----data_snk_rdy-----|data_snk
+        |----data_src_msg---->|      |------data_snk_msg---->|  
+--------'                     `------'                       `--------'          
 ```
 
 ### Using Makefile
 In `pipes/tb`
 ```bash
-# Compile and run all test cases in build directory
+# quiet default
 % make run
+# adds +verbose=1
+% make runv
+# adds +trace=1
+% make trace
+# adds +verbose=1 +trace=1
+% make debug
+# customize
+% make run RUN_ARGS='+test-case=1 +dump-vcd'
 ```
