@@ -49,14 +49,11 @@ module pipe01
     .ctrl_snk_msg_o (ctrl_snk_msg_o)
   );
 
-  task trace
-  (
-    inout [`VC_TRACE_NBITS-1:0] trace_str
-  );
+  `VC_TRACE_BEGIN
   begin
     ctrl.trace( trace_str );
   end
-  endtask
+  `VC_TRACE_END
 
 endmodule
 

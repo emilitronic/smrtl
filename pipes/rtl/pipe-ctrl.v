@@ -76,11 +76,9 @@ module pipe_ctrl
     end
   end
 
-  task trace
-  (
-    inout [`VC_TRACE_NBITS-1:0] trace_str
-  );
   reg [39:0] state_str;
+
+  `VC_TRACE_BEGIN
   begin
     if ( ctrl_src_val_i && ctrl_src_rdy_o ) begin
       $sformat( state_str, "a:%x", ctrl_src_msg_i[15:0] );
@@ -94,7 +92,7 @@ module pipe_ctrl
       vc_trace.append_str( trace_str, state_str );
     end
   end
-  endtask
+  `VC_TRACE_END
 
 endmodule
 
