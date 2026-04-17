@@ -17,7 +17,7 @@ GEN_DIR  := generated
 PIPE_STAGES ?= 1
 PIPE_COUNT  ?= 3
 PIPEVECS := $(GEN_DIR)/pipevecs_$(PIPE_STAGES)_$(PIPE_COUNT).svh
-PIPEVECS_ACTIVE := $(GEN_DIR)/current_pipevecs.svh
+PIPEVECS_CURRENT := $(GEN_DIR)/current_pipevecs.svh
 
 all: run
 
@@ -29,7 +29,7 @@ $(GEN_DIR):
 
 $(PIPEVECS): gen_pipevecs.py | $(GEN_DIR)
 	python3 gen_pipevecs.py --stages $(PIPE_STAGES) --count $(PIPE_COUNT) --output $(PIPEVECS)
-	cp $(PIPEVECS) $(PIPEVECS_ACTIVE)
+	cp $(PIPEVECS) $(PIPEVECS_CURRENT)
 
 build: $(EXE_DIR) $(PIPEVECS)
 ifeq ($(SIM),iverilog)
