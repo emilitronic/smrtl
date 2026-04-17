@@ -37,3 +37,9 @@ data_src|<-----data_src_rdy-------|      |<-------data_snk_rdy-------|data_snk
 --------'                         `------'                           `--------'          
 ```
 
+### Using Makefile
+In `pipes/tb`
+```bash
+# Compile and run all test cases in build directory
+% make run
+```

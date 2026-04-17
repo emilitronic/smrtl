@@ -400,7 +400,8 @@ module top;
   end
   endtask
 
-  `include `ASIC_TEST_CASES_FILE
+  // `include `ASIC_TEST_CASES_FILE
+  `include "asic-test-cases.svh"  // Temporary duplicate include while test cases are being rewritten.
 
   `VC_TEST_SUITE_END
 endmodule
