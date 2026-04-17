@@ -27,15 +27,25 @@ module pipe_ctrl
 
   output logic        ctrl_snk_val_o,
   input  logic        ctrl_snk_rdy_i,
-  output logic [31:0] ctrl_snk_msg_o
+  output logic [31:0] ctrl_snk_msg_o,
+
+  output logic        pipe_start_o,
+  output logic [31:0] num_inputs_o,
+  input  logic        pipe_done_i
 );
 
-  localparam [0:0] c_state_idle = 1'b0;
-  localparam [0:0] c_state_resp = 1'b1;
+  localparam [1:0] c_state_idle       = 2'd0;
+  localparam [1:0] c_state_load_count = 2'd1;
+  localparam [1:0] c_state_run        = 2'd2;
+  localparam [1:0] c_state_resp       = 2'd3;
 
-  logic [0:0]  state_reg;
-  logic [0:0]  state_next;
+  logic [1:0]  state_reg;
+  logic [1:0]  state_next;
   logic [31:0] last_cmd;
+  logic [31:0] num_inputs_reg;
+
+  wire ctrl_src_go = ctrl_src_val_i && ctrl_src_rdy_o;
+  wire ctrl_snk_go = ctrl_snk_val_o && ctrl_snk_rdy_i;
 
   // State transition logic
   always @(*) begin
@@ -43,12 +53,22 @@ module pipe_ctrl
 
     case ( state_reg )
       c_state_idle: begin
-        if ( ctrl_src_val_i )
+        if ( ctrl_src_go && ( ctrl_src_msg_i == 32'd0 ) )
+          state_next = c_state_load_count;
+      end
+
+      c_state_load_count: begin
+        if ( ctrl_src_go )
+          state_next = c_state_run;
+      end
+
+      c_state_run: begin
+        if ( pipe_done_i )
           state_next = c_state_resp;
       end
 
       c_state_resp: begin
-        if ( ctrl_snk_rdy_i )
+        if ( ctrl_snk_go )
           state_next = c_state_idle;
       end
 
@@ -58,30 +78,44 @@ module pipe_ctrl
     endcase
   end
 
-  assign ctrl_src_rdy_o = ( state_reg == c_state_idle );
+  assign ctrl_src_rdy_o =
+    ( state_reg == c_state_idle ) || ( state_reg == c_state_load_count );
   assign ctrl_snk_val_o = ( state_reg == c_state_resp );
   assign ctrl_snk_msg_o = 32'd1;
+  assign pipe_start_o   = ( state_reg == c_state_load_count ) && ctrl_src_go;
+  assign num_inputs_o   = num_inputs_reg;
 
   // State
   always @( posedge clk ) begin
     if ( reset ) begin
-      state_reg <= c_state_idle;
-      last_cmd  <= 32'b0;
+      state_reg      <= c_state_idle;
+      last_cmd       <= 32'b0;
+      num_inputs_reg <= 32'b0;
     end
     else begin
       state_reg <= state_next;
 
-      if ( ctrl_src_val_i && ctrl_src_rdy_o )
+      if ( ctrl_src_go )
         last_cmd <= ctrl_src_msg_i;
+
+      if ( state_reg == c_state_load_count && ctrl_src_go )
+        num_inputs_reg <= ctrl_src_msg_i;
     end
   end
 
-  reg [39:0] state_str;
+  reg [63:0] state_str;
 
   `VC_TRACE_BEGIN
   begin
-    if ( ctrl_src_val_i && ctrl_src_rdy_o ) begin
-      $sformat( state_str, "a:%x", ctrl_src_msg_i[15:0] );
+    if ( state_reg == c_state_idle && ctrl_src_go ) begin
+      vc_trace.append_str( trace_str, "start" );
+    end
+    else if ( state_reg == c_state_load_count && ctrl_src_go ) begin
+      $sformat( state_str, "cnt:%x", ctrl_src_msg_i[15:0] );
+      vc_trace.append_str( trace_str, state_str );
+    end
+    else if ( state_reg == c_state_run ) begin
+      $sformat( state_str, "run:%x", num_inputs_reg[15:0] );
       vc_trace.append_str( trace_str, state_str );
     end
     else if ( state_reg == c_state_resp ) begin

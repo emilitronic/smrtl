@@ -32,7 +32,8 @@ else
 endif
 
 run: build
-	$(EXE) +verbose=1 +trace=1 +test-case=1
+	$(EXE) +trace=1 +test-case=1
+# 	$(EXE) +verbose=1 +trace=1 +test-case=1
 
 clean:
 	rm -f $(EXE_DIR)/asic-exe $(EXE_DIR)/*.vcd
