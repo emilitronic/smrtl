@@ -46,6 +46,8 @@ In `pipes/tb`
 % make gen PIPE_STAGES=2 PIPE_COUNT=5
 # quiet default
 % make run
+# maybe you want to try different test cases
+% make run RUN_ARGS='+test-case=1'
 # adds +verbose=1
 % make runv
 # adds +trace=1
