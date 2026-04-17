@@ -12,6 +12,7 @@ PROC_DIR := ../../lib/proc
 
 INCLUDES := -I $(VC_DIR) -I $(SM_DIR) -I $(PROC_DIR) -I ../rtl -I .
 SRC_TOP  := asic.t.v
+RUN_ARGS ?= +test-case=1
 
 all: run
 
@@ -31,9 +32,19 @@ else
 	exit 1
 endif
 
+.PHONY: run runv trace debug build clean
+
 run: build
-	$(EXE) +trace=1 +test-case=1
-# 	$(EXE) +verbose=1 +trace=1 +test-case=1
+	$(EXE) $(RUN_ARGS)
+
+runv: build
+	$(EXE) $(RUN_ARGS) +verbose=1
+
+trace: build
+	$(EXE) $(RUN_ARGS) +trace=1
+
+debug: build
+	$(EXE) $(RUN_ARGS) +verbose=1 +trace=1
 
 clean:
 	rm -f $(EXE_DIR)/asic-exe $(EXE_DIR)/*.vcd
