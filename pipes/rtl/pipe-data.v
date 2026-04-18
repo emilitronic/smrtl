@@ -116,6 +116,22 @@ module pipe_data
       vc_trace.append_str( trace_str, "|" );
       STAGE[3].stage.trace( trace_str );
     end
+    if ( p_num_stages > 4 ) begin
+      vc_trace.append_str( trace_str, "|" );
+      STAGE[4].stage.trace( trace_str );
+    end
+    if ( p_num_stages > 5 ) begin
+      vc_trace.append_str( trace_str, "|" );
+      STAGE[5].stage.trace( trace_str );
+    end
+    if ( p_num_stages > 6 ) begin
+      vc_trace.append_str( trace_str, "|" );
+      STAGE[6].stage.trace( trace_str );
+    end
+    if ( p_num_stages > 7 ) begin
+      vc_trace.append_str( trace_str, "|" );
+      STAGE[7].stage.trace( trace_str );
+    end
   end
   `VC_TRACE_END
 `endif
