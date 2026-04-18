@@ -10,7 +10,7 @@ VC_DIR   := ../../lib/vc
 SM_DIR   := ../../lib/sm
 PROC_DIR := ../../lib/proc
 
-INCLUDES := -I $(VC_DIR) -I $(SM_DIR) -I $(PROC_DIR) -I ../rtl -I .
+INCLUDES := -I $(VC_DIR) -I $(SM_DIR) -I $(PROC_DIR) -I ../rtl -I ../rtl/lib -I ../rtl/scalar -I ../rtl/framed -I .
 SRC_TOP  := asic.t.v
 RUN_ARGS ?= +test-case=1
 GEN_DIR  := generated

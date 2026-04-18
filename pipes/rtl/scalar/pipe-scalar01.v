@@ -1,10 +1,10 @@
 //========================================================================
-// pipes/rtl/pipe01.v
+// pipes/rtl/scalar/pipe-scalar01.v
 //========================================================================
 // Sebastian Claudiusz Magierowski Apr 16 2026
 
-`ifndef PIPE01_V
-`define PIPE01_V
+`ifndef PIPE_SCALAR01_V
+`define PIPE_SCALAR01_V
 
 `include "pipe-ctrl.v"
 `include "pipe-data.v"
@@ -12,7 +12,7 @@
 `include "vc-trace.v"
 `endif
 
-module pipe01
+module pipe_scalar01
 #(
   parameter p_num_stages = 2
 )
@@ -96,4 +96,4 @@ module pipe01
 
 endmodule
 
-`endif /* PIPE01_V */
+`endif /* PIPE_SCALAR01_V */

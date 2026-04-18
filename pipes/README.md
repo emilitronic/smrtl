@@ -13,17 +13,20 @@ SRC -> FIFOi -> | 1 - | 2 - ... | N -> FIFOo -> SNK
 
 Directory organization:
 
-- `rtl/` for pipeline RTL modules
-- `tb/` for the top-level simulation entry and testbench build flow
+- `rtl/lib/` for reusable pipeline RTL blocks
+- `rtl/scalar/` for preserved scalar pipe variants
+- `rtl/framed/` for future framed-pipe variants
+- `tb/` for the scalar baseline simulation entry and build flow
+- `tb/framed/` reserved for future framed-pipe tests
 
-The intent is to begin from a very small scaffold and add:
+The intent is to preserve small useful variants and add:
 
 - ingress buffering
 - pipeline stages
 - control
 - egress buffering
 
-one piece at a time.
+one piece at a time, without losing a known-good baseline.
 
 ```
 ________                       ______                         ________
@@ -69,7 +72,7 @@ $ make trace PIPE_STAGES=4 PIPE_COUNT=12 RUN_ARGS='+test-case=1'
 cp generated/pipevecs_4_12.svh generated/current_pipevecs.svh
 ../build/asic-exe +test-case=1 +trace=1
 
- Test Suite: pipe01
+ Test Suite: pipe_scalar01
   + Test Case 1: pipe, no random delays
    0:          || .                > i:0000	 :00/00 n:04 stg:----|stg:----|stg:----|stg:---- > .        || .               
    1: 00000000 || #                > start	 :00/00 n:04 stg:----|stg:----|stg:----|stg:---- >          ||                 
