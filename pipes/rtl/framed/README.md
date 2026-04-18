@@ -17,3 +17,12 @@ pipe-framer.v ->| pipe-framed-data.v  |
                 | pipe-framed-stage.v |     
                 `_____________________'
 ```
+
+### Using Makefile
+In `pipes/framed/tb`
+```bash
+# run
+% make run PIPE_COUNT=5 RUN_ARGS=
+# see all traces
+% make trace PIPE_COUNT=5 RUN_ARGS=
+```
