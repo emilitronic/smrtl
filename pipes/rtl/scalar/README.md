@@ -55,7 +55,7 @@ cp generated/pipevecs_4_12.svh generated/current_pipevecs.svh
   16: .        ||                  > un:000c	 :09/0c n:04 stg:----|stg:00ce|stg:00be|stg:00ae >          || 00000000000000ae
   17: .        ||                  > un:000c	 :0a/0c n:04 stg:----|stg:----|stg:00cf|stg:00bf >          || 00000000000000bf
   18: .        ||                  > un:000c	 :0b/0c n:04 stg:----|stg:----|stg:----|stg:00d0 >          || 00000000000000d0
-  19: .        || .                > done	 :0c/0c n:04 stg:----|stg:----|stg:----|stg:---- > 00000001 || .               
+  19: .        || .                > done	     :0c/0c n:04 stg:----|stg:----|stg:----|stg:---- > 00000001 || .               
 
 ./asic-test-harness.v:414: $finish called at 290 (1s)
 ```

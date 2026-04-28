@@ -70,7 +70,7 @@ cp generated/pipevecs_framed_4_12_1_2_5.svh generated/current_pipevecs.svh
   16: .        ||                   > un:000c	 :09/0c n:04 fst:- lst:- dat:----|fst:1 lst:1 dat:00ce|fst:0 lst:1 dat:00be|fst:1 lst:0 dat:00ae >          || 200000000000000ae
   17: .        ||                   > un:000c	 :0a/0c n:04 fst:- lst:- dat:----|fst:- lst:- dat:----|fst:1 lst:1 dat:00cf|fst:0 lst:1 dat:00bf >          || 100000000000000bf
   18: .        ||                   > un:000c	 :0b/0c n:04 fst:- lst:- dat:----|fst:- lst:- dat:----|fst:- lst:- dat:----|fst:1 lst:1 dat:00d0 >          || 300000000000000d0
-  19: .        || .                 > done	 :0c/0c n:04 fst:- lst:- dat:----|fst:- lst:- dat:----|fst:- lst:- dat:----|fst:- lst:- dat:---- > 00000001 || .                
+  19: .        || .                 > done	   :0c/0c n:04 fst:- lst:- dat:----|fst:- lst:- dat:----|fst:- lst:- dat:----|fst:- lst:- dat:---- > 00000001 || .                
 
 ../asic-test-harness.v:413: $finish called at 290 (1s)
 ```

@@ -13,6 +13,7 @@ SRC -> FIFOi -> | 1 - | 2 - ... | N -> FIFOo -> SNK
 
 Directory organization:
 
+- `doc/` for design notes and staged development plans
 - `rtl/lib/` for reusable pipeline RTL blocks
 - `rtl/scalar/` for preserved scalar pipe variants
 - `rtl/framed/` for future framed-pipe variants
@@ -28,6 +29,8 @@ The intent is to preserve small useful variants and add:
 - egress buffering
 
 one piece at a time, without losing a known-good baseline.
+
+See `doc/framed-pipeline-plan.md` for the staged framed-pipeline plan.
 
 ```
 ________                       ______                         ________
