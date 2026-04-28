@@ -24,4 +24,6 @@ $ make run PIPE_COUNT=5 RUN_ARGS=
 $ make trace PIPE_COUNT=5 RUN_ARGS=
 # see just one trace
 $ make trace PIPE_COUNT=5 RUN_ARGS='+test-case=4'
+# vary the number of stages
+$ make run PIPE_STAGES=5 PIPE_COUNT=8 RUN_ARGS=
 ```

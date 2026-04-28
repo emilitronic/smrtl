@@ -16,7 +16,7 @@ RUN_ARGS ?= +test-case=1
 PIPE_STAGES ?= 2
 GEN_DIR   := generated
 PIPE_COUNT ?= 4
-PIPEVECS := $(GEN_DIR)/pipevecs_framed_$(PIPE_COUNT).svh
+PIPEVECS := $(GEN_DIR)/pipevecs_framed_$(PIPE_STAGES)_$(PIPE_COUNT).svh
 PIPEVECS_CURRENT := $(GEN_DIR)/current_pipevecs.svh
 
 all: run
@@ -28,7 +28,7 @@ $(GEN_DIR):
 	mkdir -p $(GEN_DIR)
 
 $(PIPEVECS): gen_pipevecs_framed.py | $(GEN_DIR)
-	python3 gen_pipevecs_framed.py --count $(PIPE_COUNT) --output $(PIPEVECS)
+	python3 gen_pipevecs_framed.py --stages $(PIPE_STAGES) --count $(PIPE_COUNT) --output $(PIPEVECS)
 
 .PHONY: sync-current
 

@@ -16,8 +16,9 @@ Directory organization:
 - `rtl/lib/` for reusable pipeline RTL blocks
 - `rtl/scalar/` for preserved scalar pipe variants
 - `rtl/framed/` for future framed-pipe variants
-- `tb/` for the scalar baseline simulation entry and build flow
-- `tb/framed/` reserved for future framed-pipe tests
+- `tb/` for shared testbench infrastructure
+- `tb/scalar/` for the scalar baseline simulation entry and build flow
+- `tb/framed/` for framed-pipe tests
 
 The intent is to preserve small useful variants and add:
 
@@ -41,7 +42,7 @@ data_src|<---data_src_rdy-----|      |<-----data_snk_rdy-----|data_snk
 ```
 
 ### Using Makefile
-In `pipes/tb`
+In `pipes/tb/scalar`
 ```bash
 # make test vectors (default is 1 stage and 3 vectors)
 $ make gen
@@ -65,12 +66,14 @@ $ make debug
 $ make run RUN_ARGS='+test-case=1 +dump-vcd'
 ```
 
+The framed tests use the same basic commands from `pipes/tb/framed`.
+
 ### What You'll See
 ```bash
 # try this
 $ make trace PIPE_STAGES=4 PIPE_COUNT=12 RUN_ARGS='+test-case=1'
 cp generated/pipevecs_4_12.svh generated/current_pipevecs.svh
-../build/asic-exe +test-case=1 +trace=1
+../../build/asic-scalar-exe +test-case=1 +trace=1
 
  Test Suite: pipe_scalar01
   + Test Case 1: pipe, no random delays

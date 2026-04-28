@@ -1,11 +1,11 @@
 //========================================================================
-// PIPES Unit Tests pipes/tb/asic.t.v
+// PIPES Scalar Unit Tests pipes/tb/scalar/asic.t.v
 //========================================================================
 // Sebastian Claudiusz Magierowski Apr 8 2026
 
 // This file is intentionally minimal while the pipes framework is being
 // organized. The top-level testbench entry will grow from here as the
-// RTL and harness files are added under ../rtl and ./.
+// RTL and harness files are added under ../../rtl and ./.
 
 `define ASIC_IMPL             pipe_scalar01       // ASIC module name
 `define ASIC_IMPL_STR         "pipe_scalar01"     // ASIC module name string for macro digest

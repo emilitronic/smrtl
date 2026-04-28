@@ -12,7 +12,6 @@ from pathlib import Path
 import sys
 
 
-DEFAULT_STAGES = 2
 FRAME_PATTERN = (3, 1)
 
 
@@ -43,7 +42,7 @@ def pack_msg(first: int, last: int, data: int) -> int:
     return (first << 65) | (last << 64) | data
 
 
-def render_vector_lines(count: int, output: Path, stages: int = DEFAULT_STAGES) -> str:
+def render_vector_lines(stages: int, count: int, output: Path) -> str:
     lines: list[str] = []
     timestamp = datetime.now().isoformat(timespec="seconds")
     invocation = " ".join(sys.argv)
@@ -89,16 +88,19 @@ def render_vector_lines(count: int, output: Path, stages: int = DEFAULT_STAGES) 
 
 def main() -> None:
     parser = argparse.ArgumentParser(description="Generate framed pipe test vectors.")
+    parser.add_argument("--stages", type=int, required=True, help="Number of +1 stages in the pipe.")
     parser.add_argument("--count", type=int, required=True, help="Number of framed beats.")
     parser.add_argument("--output", type=Path, required=True, help="Output include file.")
     args = parser.parse_args()
 
+    if args.stages < 0:
+        raise SystemExit("--stages must be non-negative")
     if args.count < 0:
         raise SystemExit("--count must be non-negative")
 
     args.output.parent.mkdir(parents=True, exist_ok=True)
     args.output.write_text(
-        render_vector_lines(args.count, args.output),
+        render_vector_lines(args.stages, args.count, args.output),
         encoding="ascii",
     )
 

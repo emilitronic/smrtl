@@ -1,16 +1,16 @@
-# pipes/tb/Makefile
+# pipes/tb/scalar/Makefile
 
 SIM      ?= iverilog
 
 TOP      ?= top
-EXE_DIR  ?= ../build
-EXE      ?= $(EXE_DIR)/asic-exe
+EXE_DIR  ?= ../../build
+EXE      ?= $(EXE_DIR)/asic-scalar-exe
 
-VC_DIR   := ../../lib/vc
-SM_DIR   := ../../lib/sm
-PROC_DIR := ../../lib/proc
+VC_DIR   := ../../../lib/vc
+SM_DIR   := ../../../lib/sm
+PROC_DIR := ../../../lib/proc
 
-INCLUDES := -I $(VC_DIR) -I $(SM_DIR) -I $(PROC_DIR) -I ../rtl -I ../rtl/lib -I ../rtl/scalar -I ../rtl/framed -I .
+INCLUDES := -I $(VC_DIR) -I $(SM_DIR) -I $(PROC_DIR) -I ../../rtl -I ../../rtl/lib -I ../../rtl/scalar -I ../../rtl/framed -I .. -I .
 SRC_TOP  := asic.t.v
 RUN_ARGS ?= +test-case=1
 GEN_DIR  := generated
@@ -66,5 +66,5 @@ debug: build
 	$(EXE) $(RUN_ARGS) +verbose=1 +trace=1
 
 clean:
-	rm -f $(EXE_DIR)/asic-exe $(EXE_DIR)/*.vcd
+	rm -f $(EXE_DIR)/asic-scalar-exe $(EXE_DIR)/*.vcd
 	rm -rf $(GEN_DIR)
