@@ -2,7 +2,21 @@
 // pipes/rtl/framed/pipe-framed01.v
 //========================================================================
 // Sebastian Claudiusz Magierowski Apr 18 2026
-
+/*
+                 _______________________
+                |    pipe-framed01.v    |
+                |                       |
+                |      pipe_ctrl.v      |
+                |          |            |
+                |          V            |
+                |+---------------------+|
+pipe-framer.v ->|| pipe-framed-data.v  ||
+                ||        A            ||
+                ||        |            ||
+                || pipe-framed-stage.v || 
+                |'_____________________'|    
+                `_______________________'
+*/
 `ifndef PIPE_FRAMED01_V
 `define PIPE_FRAMED01_V
 
