@@ -44,25 +44,25 @@ data_src|<---data_src_rdy-----|      |<-----data_snk_rdy-----|data_snk
 In `pipes/tb`
 ```bash
 # make test vectors (default is 1 stage and 3 vectors)
-% make gen
+$ make gen
 # but you can vary it, e.g., 2 stages and 5 vectors
-% make gen PIPE_STAGES=2 PIPE_COUNT=5
+$ make gen PIPE_STAGES=2 PIPE_COUNT=5
 # quiet default, it also generates the test vectors
-% make run
+$ make run
 # maybe you want to try different test cases
-% make run RUN_ARGS='+test-case=1'
+$ make run RUN_ARGS='+test-case=1'
 # or try all test cases
-% make run RUN_ARGS='+test-case'
+$ make run RUN_ARGS='+test-case'
 # or even simpler, run all test cases with (e.g., with some pipe settings)
-% make run PIPE_STAGES=3 PIPE_COUNT=4 RUN_ARGS=
+$ make run PIPE_STAGES=3 PIPE_COUNT=4 RUN_ARGS=
 # adds +verbose=1
-% make runv
+$ make runv
 # adds +trace=1
-% make trace
+$ make trace
 # adds +verbose=1 +trace=1
-% make debug
+$ make debug
 # customize
-% make run RUN_ARGS='+test-case=1 +dump-vcd'
+$ make run RUN_ARGS='+test-case=1 +dump-vcd'
 ```
 
 ### What You'll See
