@@ -1,32 +1,32 @@
 //========================================================================
-// pipes/rtl/framed/pipe-framed01.v
+// pipes/rtl/framed/pipe-framebits01.v
 //========================================================================
 // Sebastian Claudiusz Magierowski Apr 18 2026
 /*
                  _______________________
-                |    pipe-framed01.v    |
+                |   pipe-framebits01.v   |
                 |                       |
                 |      pipe_ctrl.v      |
                 |          |            |
                 |          V            |
                 |+---------------------+|
-pipe-framer.v ->|| pipe-framed-data.v  ||
+pipe-framer.v ->|| pipe-framebits-data.v ||
                 ||        A            ||
                 ||        |            ||
-                || pipe-framed-stage.v || 
+                || pipe-framebits-stage.v|| 
                 |'_____________________'|    
                 `_______________________'
 */
-`ifndef PIPE_FRAMED01_V
-`define PIPE_FRAMED01_V
+`ifndef PIPE_FRAMEBITS01_V
+`define PIPE_FRAMEBITS01_V
 
 `include "pipe-ctrl.v"
-`include "pipe-framed-data.v"
+`include "pipe-framebits-data.v"
 `ifndef SYNTHESIS
 `include "vc-trace.v"
 `endif
 
-module pipe_framed01
+module pipe_framebits01
 #(
   parameter p_num_stages = 2,
   parameter p_data_nbits = 64
@@ -73,7 +73,7 @@ module pipe_framed01
     .pipe_done_i    ( pipe_done      )
   );
 
-  pipe_framed_data#(
+  pipe_framebits_data#(
     .p_num_stages ( p_num_stages ),
     .p_data_nbits ( p_data_nbits )
   )
@@ -111,4 +111,4 @@ module pipe_framed01
 
 endmodule
 
-`endif /* PIPE_FRAMED01_V */
+`endif /* PIPE_FRAMEBITS01_V */

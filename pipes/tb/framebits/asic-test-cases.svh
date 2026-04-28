@@ -1,5 +1,5 @@
 //========================================================================
-// PIPES Framed Test Cases pipes/tb/framed/asic-test-cases.svh
+// PIPES Framebits Test Cases pipes/tb/framebits/asic-test-cases.svh
 //========================================================================
 // Sebastian Claudiusz Magierowski Apr 18 2026
 
@@ -9,7 +9,7 @@ begin
 end
 endtask
 
-`VC_TEST_CASE_BEGIN( 1, "framed pipe, no random delays" )
+`VC_TEST_CASE_BEGIN( 1, "framebits pipe, no random delays" )
 begin
   clear_streams();
   init_rand_delays( 0, 0, 0, 0 );
@@ -18,7 +18,7 @@ begin
 end
 `VC_TEST_CASE_END
 
-`VC_TEST_CASE_BEGIN( 2, "framed pipe, control path random delays" )
+`VC_TEST_CASE_BEGIN( 2, "framebits pipe, control path random delays" )
 begin
   clear_streams();
   init_rand_delays( 4, 4, 0, 0 );
@@ -27,7 +27,7 @@ begin
 end
 `VC_TEST_CASE_END
 
-`VC_TEST_CASE_BEGIN( 3, "framed pipe, data path random delays" )
+`VC_TEST_CASE_BEGIN( 3, "framebits pipe, data path random delays" )
 begin
   clear_streams();
   init_rand_delays( 0, 0, 4, 4 );
@@ -36,7 +36,7 @@ begin
 end
 `VC_TEST_CASE_END
 
-`VC_TEST_CASE_BEGIN( 4, "framed pipe, all paths random delays" )
+`VC_TEST_CASE_BEGIN( 4, "framebits pipe, all paths random delays" )
 begin
   clear_streams();
   init_rand_delays( 4, 4, 4, 4 );

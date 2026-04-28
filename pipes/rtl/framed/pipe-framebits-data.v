@@ -1,9 +1,9 @@
 //========================================================================
-// pipes/rtl/framed/pipe-framed-data.v
+// pipes/rtl/framed/pipe-framebits-data.v
 //========================================================================
 // Sebastian Claudiusz Magierowski Apr 18 2026
 /*
-  This is a framed analogue of pipe_data. It chains pipe_framed_stage
+  This is a framebits analogue of pipe_data. It chains pipe_framebits_stage
   instances together and uses the same retirement-based done rule as the
   scalar datapath:
 
@@ -16,15 +16,15 @@
     - data_src_msg_i / data_snk_msg_o are packed as { first, last, data }
 */
 
-`ifndef PIPE_FRAMED_DATA_V
-`define PIPE_FRAMED_DATA_V
+`ifndef PIPE_FRAMEBITS_DATA_V
+`define PIPE_FRAMEBITS_DATA_V
 
-`include "pipe-framed-stage.v"
+`include "pipe-framebits-stage.v"
 `ifndef SYNTHESIS
 `include "vc-trace.v"
 `endif
 
-module pipe_framed_data
+module pipe_framebits_data
 #(
   parameter p_num_stages = 2,
   parameter p_data_nbits = 64
@@ -67,7 +67,7 @@ module pipe_framed_data
   genvar s;
   generate
     for ( s = 0; s < p_num_stages; s = s + 1 ) begin : STAGE
-      pipe_framed_stage#(
+      pipe_framebits_stage#(
         .p_data_nbits ( p_data_nbits ),
         .p_addend     ( 64'd1        )
       )
@@ -153,4 +153,4 @@ module pipe_framed_data
 
 endmodule
 
-`endif /* PIPE_FRAMED_DATA_V */
+`endif /* PIPE_FRAMEBITS_DATA_V */

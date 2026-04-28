@@ -1,9 +1,9 @@
 //========================================================================
-// pipes/rtl/framed/pipe-framed-stage.v
+// pipes/rtl/framed/pipe-framebits-stage.v
 //========================================================================
 // Sebastian Claudiusz Magierowski Apr 18 2026
 /*
-  This is a single stage of a framed pipeline. val/rdy handshakes move messages through stages.
+  This is a single stage of a framebits pipeline. val/rdy handshakes move messages through stages.
   The message format is:  { first, last, data } where the first and last bits are used to indicate the first and last
   messages of a frame, respectively. The data bits are used to carry the payload data.
 
@@ -18,14 +18,14 @@
   - trace prints first, last, and low 16 bits of data  
 */
 
-`ifndef PIPE_FRAMED_STAGE_V
-`define PIPE_FRAMED_STAGE_V
+`ifndef PIPE_FRAMEBITS_STAGE_V
+`define PIPE_FRAMEBITS_STAGE_V
 
 `ifndef SYNTHESIS
 `include "vc-trace.v"
 `endif
 
-module pipe_framed_stage
+module pipe_framebits_stage
 #(
   parameter p_data_nbits = 64,
   parameter p_addend     = 64'd1
@@ -98,4 +98,4 @@ module pipe_framed_stage
 
 endmodule
 
-`endif /* PIPE_FRAMED_STAGE_V */
+`endif /* PIPE_FRAMEBITS_STAGE_V */

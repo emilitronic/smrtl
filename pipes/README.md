@@ -19,7 +19,7 @@ Directory organization:
 - `rtl/framed/` for future framed-pipe variants
 - `tb/` for shared testbench infrastructure
 - `tb/scalar/` for the scalar baseline simulation entry and build flow
-- `tb/framed/` for framed-pipe tests
+- `tb/framebits/` for the framebits baseline tests
 
 The intent is to preserve small useful variants and add:
 
@@ -45,6 +45,6 @@ data_src|<---data_src_rdy-----|      |<-----data_snk_rdy-----|data_snk
 ```
 
 See `pipes/rtl/scalar/README.md` for the scalar pipeline baseline.
-See `pipes/rtl/framed/README.md` for the framed-pipe variants.
+See `pipes/rtl/framed/README.md` for framebits and framed metadata variants.
 
 (c) Sebastian Claudiusz Magierowski

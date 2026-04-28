@@ -1,10 +1,10 @@
-# pipes/tb/framed/Makefile
+# pipes/tb/framebits/Makefile
 
 SIM      ?= iverilog
 
 TOP      ?= top
 EXE_DIR  ?= ../../build
-EXE      ?= $(EXE_DIR)/asic-framed-exe
+EXE      ?= $(EXE_DIR)/asic-framebits-exe
 
 VC_DIR   := ../../../lib/vc
 SM_DIR   := ../../../lib/sm
@@ -19,7 +19,7 @@ PIPE_COUNT ?= 4
 FRAME_PATTERN ?= 3,1
 comma := ,
 FRAME_PATTERN_ID := $(subst $(comma),_,$(FRAME_PATTERN))
-PIPEVECS := $(GEN_DIR)/pipevecs_framed_$(PIPE_STAGES)_$(PIPE_COUNT)_$(FRAME_PATTERN_ID).svh
+PIPEVECS := $(GEN_DIR)/pipevecs_framebits_$(PIPE_STAGES)_$(PIPE_COUNT)_$(FRAME_PATTERN_ID).svh
 PIPEVECS_CURRENT := $(GEN_DIR)/current_pipevecs.svh
 
 all: run
@@ -30,8 +30,8 @@ $(EXE_DIR):
 $(GEN_DIR):
 	mkdir -p $(GEN_DIR)
 
-$(PIPEVECS): gen_pipevecs_framed.py | $(GEN_DIR)
-	python3 gen_pipevecs_framed.py --stages $(PIPE_STAGES) --count $(PIPE_COUNT) --frame-pattern $(FRAME_PATTERN) --output $(PIPEVECS)
+$(PIPEVECS): gen_pipevecs_framebits.py | $(GEN_DIR)
+	python3 gen_pipevecs_framebits.py --stages $(PIPE_STAGES) --count $(PIPE_COUNT) --frame-pattern $(FRAME_PATTERN) --output $(PIPEVECS)
 
 .PHONY: sync-current
 
@@ -69,5 +69,5 @@ debug: build
 	$(EXE) $(RUN_ARGS) +verbose=1 +trace=1
 
 clean:
-	rm -f $(EXE_DIR)/asic-framed-exe $(EXE_DIR)/*.vcd
+	rm -f $(EXE_DIR)/asic-framebits-exe $(EXE_DIR)/*.vcd
 	rm -rf $(GEN_DIR)

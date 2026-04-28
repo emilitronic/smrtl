@@ -1,6 +1,8 @@
 # Framed RTL
 
-This directory is reserved for framed-pipe variants.  The intent is to keep the current scalar baseline in `rtl/scalar/` stable while new framing-oriented designs are explored here.
+This directory is reserved for framed-pipe variants. The current Stage 1
+baseline is the framebits pipe, which carries only `first`, `last`, and
+`data`.
 
 Now the system uses sideband frame boundary labels.  Two extra bits are carried to indicate whether signals are first, middle, or last in a frame.
 
@@ -15,20 +17,20 @@ Now the system uses sideband frame boundary labels.  Two extra bits are carried 
 
 ```
                  _____________________
-                |  pipe-framed01.v    |
+                | pipe-framebits01.v  |
                 |                     |
                 |    pipe_ctrl.v      |
                 |        |            |
                 |        V            |
-pipe-framer.v ->| pipe-framed-data.v  |
+pipe-framer.v ->| pipe-framebits-data.v |
                 |        A            |
                 |        |            |
-                | pipe-framed-stage.v |     
+                | pipe-framebits-stage.v |     
                 `_____________________'
 ```
 
 ## Using Makefile
-In `pipes/tb/framed`
+In `pipes/tb/framebits`
 ```bash
 # run all test cases with 5 vectors
 $ make run PIPE_COUNT=5 RUN_ARGS=
@@ -46,11 +48,11 @@ $ make run PIPE_STAGES=4 PIPE_COUNT=12 FRAME_PATTERN=1,2,5 RUN_ARGS=
 ```bash
 # try this
 $ make trace PIPE_STAGES=4 PIPE_COUNT=12 FRAME_PATTERN=1,2,5 RUN_ARGS='+test-case=1'
-cp generated/pipevecs_framed_4_12_1_2_5.svh generated/current_pipevecs.svh
-../../build/asic-framed-exe +test-case=1 +trace=1
+cp generated/pipevecs_framebits_4_12_1_2_5.svh generated/current_pipevecs.svh
+../../build/asic-framebits-exe +test-case=1 +trace=1
 
- Test Suite: pipe_framed01
-  + Test Case 1: framed pipe, no random delays
+ Test Suite: pipe_framebits01
+  + Test Case 1: framebits pipe, no random delays
    0:          || .                 > i:0000	 :00/00 n:04 fst:- lst:- dat:----|fst:- lst:- dat:----|fst:- lst:- dat:----|fst:- lst:- dat:---- > .        || .                
    1: 00000000 || #                 > start	   :00/00 n:04 fst:- lst:- dat:----|fst:- lst:- dat:----|fst:- lst:- dat:----|fst:- lst:- dat:---- >          ||                  
    2: 0000000c || #                 > nt:000c	 :00/00 n:04 fst:- lst:- dat:----|fst:- lst:- dat:----|fst:- lst:- dat:----|fst:- lst:- dat:---- >          ||                  
@@ -82,4 +84,4 @@ What's happening under the hood? For example, when running
 ```bash
 $ make run PIPE_STAGES=4 PIPE_COUNT=12 RUN_ARGS=
 ```
-the execution will look for `tb/framed/generated/pipevecs_framed_4_12.svh`.  If that file already exists and is up to date (i.e., not older than the Python generator script `tb/framed/gen_pipevecs_framed.py`) Make will copy it to `tb/framed/generated/current_pipevecs.svh` it will not rerun the Python generator script.  If the file does not exist or is outdated, Make will run the Python generator script to create it, and then copy it to `current_pipevecs.svh`.  The test harness will include `current_pipevecs.svh` to get the test vectors for the simulation. 
+the execution will look for `tb/framebits/generated/pipevecs_framebits_4_12_3_1.svh`. If that file already exists and is up to date, Make will copy it to `tb/framebits/generated/current_pipevecs.svh`; otherwise Make will run `tb/framebits/gen_pipevecs_framebits.py` first. The test harness includes `current_pipevecs.svh` to get the test vectors for the simulation.
