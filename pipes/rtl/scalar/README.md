@@ -59,6 +59,7 @@ cp generated/pipevecs_4_12.svh generated/current_pipevecs.svh
 
 ./asic-test-harness.v:414: $finish called at 290 (1s)
 ```
+To begin with, you are sending a start signal to your pipe's controller (cycle 1).  Then on cycle 2 you are indicating how many total beats need to be processed (12 in this case).
 
 ## Details
 What's happening under the hood? For example, when running
