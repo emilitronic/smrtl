@@ -1,6 +1,18 @@
 # Framed RTL
 
 This directory is reserved for framed-pipe variants.  The intent is to keep the current scalar baseline in `rtl/scalar/` stable while new framing-oriented designs are explored here.
+
+Now the system uses sideband frame boundary labels.  Two extra bits are carried to indicate whether signals are first, middle, or last in a frame.
+
+## Frame boundary encoding
+
+| `first` | `last` | Beat meaning |
+|---:|---:|---|
+| 0 | 0 | Middle beat |
+| 0 | 1 | Last beat |
+| 1 | 0 | First beat |
+| 1 | 1 | Only beat in the frame (single-beat frame) |
+
 ```
                  _____________________
                 |  pipe-framed01.v    |
