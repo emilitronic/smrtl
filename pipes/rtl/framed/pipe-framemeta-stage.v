@@ -85,7 +85,7 @@ module pipe_framemeta_stage
   // Line Tracing
   //----------------------------------------------------------------------
 
-  logic [255:0] state_str;
+  logic [383:0] state_str;
 
   `VC_TRACE_BEGIN
   begin

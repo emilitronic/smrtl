@@ -20,6 +20,7 @@ Directory organization:
 - `tb/` for shared testbench infrastructure
 - `tb/scalar/` for the scalar baseline simulation entry and build flow
 - `tb/framebits/` for the framebits baseline tests
+- `tb/framemeta/` for the instrumented framed metadata tests
 
 The intent is to preserve small useful variants and add:
 
