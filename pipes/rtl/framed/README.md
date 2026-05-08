@@ -80,7 +80,7 @@ cp generated/pipevecs_framebits_4_12_1_2_5.svh generated/current_pipevecs.svh
 
 ../asic-test-harness.v:413: $finish called at 290 (1s)
 ```
-To begin with, you are sending a start signal to your pipe's controller (cycle 1).  Then on cycle 2 you are indicating how many total beats need to be processed (12 in this case).
+To begin with, you are sending a start signal to your pipe's controller (cycle 1).  Then on cycle 2 you are indicating how many total beats need to be processed (12 in this case).  Notice the MSBs in your inputs (and outputs), those leading bits are your frame bits, indicating whether the beat is first, middle, or last in a frame.  The testbench generates expected metadata and data values, and checks that they are preserved under random delay.
 
 
 ### Details
@@ -88,7 +88,7 @@ What's happening under the hood? For example, when running
 ```bash
 $ make run PIPE_STAGES=4 PIPE_COUNT=12 RUN_ARGS=
 ```
-the execution will look for `tb/framebits/generated/pipevecs_framebits_4_12_3_1.svh`. If that file already exists and is up to date, Make will copy it to `tb/framebits/generated/current_pipevecs.svh`; otherwise Make will run `tb/framebits/gen_pipevecs_framebits.py` first. The test harness includes `current_pipevecs.svh` to get the test vectors for the simulation.
+the execution will look for `tb/framebits/generated/pipevecs_framebits_4_12_3_1.svh`. If that file already exists and is up-to-date, Make will copy it to `tb/framebits/generated/current_pipevecs.svh`; otherwise Make will run `tb/framebits/gen_pipevecs_framebits.py` first. The test harness includes `current_pipevecs.svh` to get the test vectors for the simulation.
 
 ## Frame meta boundary encoding
 
