@@ -6,6 +6,20 @@ This directory is reserved for framed-pipe variants.
 - Stage 2 `framemeta` will carry `frame_id`, `beat_idx`, `first`, `last`,
   and `data`.
 
+```text
+  rtl/framed/
+    pipe-framer.v              // raw -> {first,last,data}
+    pipe-framegen01.v          // framer + framebits data
+
+    pipe-framemeta-framer.v    // raw -> {frame_id,beat_idx,first,last,data}
+    pipe-framemeta-gen01.v     // framemeta framer + framemeta data
+
+  And test flow:
+
+  tb/framegen/                 // current framebits-integrated path
+  tb/framemetagen/             // new raw -> framemeta integrated path
+```
+
 Now the system uses sideband frame boundary labels.  Two extra bits are carried to indicate whether signals are first, middle, or last in a frame.
 
 ## Frame bits boundary encoding
