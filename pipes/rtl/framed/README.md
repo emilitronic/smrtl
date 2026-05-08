@@ -137,4 +137,4 @@ cp generated/pipevecs_framemeta_5_12_1_2_5_4_8.svh generated/current_pipevecs.sv
   20: .        || .                    > done	     :0c/0c n:05 fid:- bid:-  fst:- lst:- dat:----|fid:- bid:-  fst:- lst:- dat:----|fid:- bid:-  fst:- lst:- dat:----|fid:- bid:-  fst:- lst:- dat:----|fid:- bid:-  fst:- lst:- dat:---- > 00000001 || .  
 ../asic-test-harness.v:413: $finish called at 300 (1s)
 ```
-Where `bid` tracks which beat within the frame is being processed, and `fid` tracks which frame is being processed.  The testbench generates expected metadata and data values, and checks that they are preserved under random delay.
+Where `bid` tracks which beat within the frame is being processed, and `fid` tracks which frame is being processed.  The testbench generates expected metadata and data values, and checks that they are preserved under random delay.  
