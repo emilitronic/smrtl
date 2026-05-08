@@ -44,5 +44,5 @@ cp generated/pipevecs_framegen_4_12_5.svh generated/current_pipevecs.svh
   19: .        || .                > done	     frm:idle > :0c/0c n:04 fst:- lst:- dat:----|fst:- lst:- dat:----|fst:- lst:- dat:----|fst:- lst:- dat:---- > 00000001 || .                
 
 ./framegen-test-harness.v:309: $finish called at 290 (1s)
-
 ```
+To begin with, you are sending a start signal to your pipe's controller (cycle 1).  Then on cycle 2 you are indicating how many total beats need to be processed (12 in this case).

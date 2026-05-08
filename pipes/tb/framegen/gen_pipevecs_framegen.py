@@ -3,6 +3,16 @@
 # pipes/tb/framegen/gen_pipevecs_framegen.py
 #=========================================================================
 # Sebastian Claudiusz Magierowski May 8 2026
+#
+# Generate include-file test vectors for the integrated framegen pipe.
+# The source side is raw 64-bit data; the expected sink side is the framed
+# `{ first, last, data }` stream after each data beat has passed through the
+# configured number of +1 pipeline stages.
+#
+# The generator must be told the same run settings used by the Verilog build:
+# total raw beat count, fixed frame length, and number of pipeline stages.
+# The beat count and frame length determine where `first`/`last` should appear;
+# the stage count determines how much each output data value should increase.
 
 from __future__ import annotations
 
@@ -97,4 +107,3 @@ def main() -> None:
 
 if __name__ == "__main__":
     main()
-
