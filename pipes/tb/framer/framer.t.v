@@ -2,6 +2,7 @@
 // Pipe Framer Unit Tests pipes/tb/framer/framer.t.v
 //========================================================================
 // Sebastian Claudiusz Magierowski May 8 2026
+// For standalone testing of pipe-framer.v. See `tb/framer/README.md` for instructions.
 
 `define RAW_MSG_NBITS 64
 `define FRM_MSG_NBITS 66

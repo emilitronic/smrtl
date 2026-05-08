@@ -88,7 +88,7 @@ module pipe_ctrl
   assign ctrl_snk_val_o = ( state_reg == STATE_RESP );
   assign ctrl_snk_msg_o = 32'd1;
   assign pipe_start_o   = ( state_reg == STATE_LOAD_COUNT ) && ctrl_src_go;
-  assign num_inputs_o   = num_inputs_reg;
+  assign num_inputs_o   = pipe_start_o ? ctrl_src_msg_i : num_inputs_reg; // so num_inputs_o bybpasses accepted count on pipe_start_o cycle
 
   // State
   always @( posedge clk ) begin

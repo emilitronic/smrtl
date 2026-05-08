@@ -1,0 +1,306 @@
+//========================================================================
+// PIPE Framegen Test Harness pipes/tb/framegen/framegen-test-harness.v
+//========================================================================
+// Sebastian Claudiusz Magierowski May 8 2026
+
+`include "vc-TestRandDelaySource.v"
+`include "vc-TestRandDelaySink.v"
+`include "vc-test.v"
+`include "vc-trace.v"
+`include "vc-preprocessor.v"
+
+module TestHarness#(
+  parameter p_num_msgs = 2*1024
+)(
+  input  logic clk,
+  input  logic reset,
+  input  logic [31:0] ctrl_src_max_delay,
+  input  logic [31:0] ctrl_snk_max_delay,
+  input  logic [31:0] data_src_max_delay,
+  input  logic [31:0] data_snk_max_delay,
+  output logic done
+);
+
+  logic [`ASIC_CTRL_MSG_NBITS-1:0]     ctrl_src_msg;
+  logic                                ctrl_src_val;
+  logic                                ctrl_src_rdy;
+  logic                                ctrl_src_done;
+
+  logic [`ASIC_CTRL_MSG_NBITS-1:0]     ctrl_snk_msg;
+  logic                                ctrl_snk_val;
+  logic                                ctrl_snk_rdy;
+  logic                                ctrl_snk_done;
+
+  logic [`ASIC_DATA_SRC_MSG_NBITS-1:0] data_src_msg;
+  logic                                data_src_val;
+  logic                                data_src_rdy;
+  logic                                data_src_done;
+
+  logic [`ASIC_DATA_SNK_MSG_NBITS-1:0] data_snk_msg;
+  logic                                data_snk_val;
+  logic                                data_snk_rdy;
+  logic                                data_snk_done;
+
+  vc_TestRandDelaySource#(
+    .p_msg_nbits ( `ASIC_CTRL_MSG_NBITS ),
+    .p_num_msgs  ( p_num_msgs           )
+  )
+  ctrl_src
+  (
+    .clk       ( clk                ),
+    .reset     ( reset              ),
+    .max_delay ( ctrl_src_max_delay ),
+    .val       ( ctrl_src_val       ),
+    .rdy       ( ctrl_src_rdy       ),
+    .msg       ( ctrl_src_msg       ),
+    .done      ( ctrl_src_done      )
+  );
+
+  vc_TestRandDelaySource#(
+    .p_msg_nbits ( `ASIC_DATA_SRC_MSG_NBITS ),
+    .p_num_msgs  ( p_num_msgs               )
+  )
+  data_src
+  (
+    .clk       ( clk                ),
+    .reset     ( reset              ),
+    .max_delay ( data_src_max_delay ),
+    .val       ( data_src_val       ),
+    .rdy       ( data_src_rdy       ),
+    .msg       ( data_src_msg       ),
+    .done      ( data_src_done      )
+  );
+
+  `ASIC_IMPL#(
+    .p_num_stages ( `ASIC_IMPL_NUM_STAGES ),
+    .p_frame_len  ( `ASIC_FRAME_LEN       )
+  )
+  asic
+  (
+    .clk            ( clk          ),
+    .reset          ( reset        ),
+
+    .ctrl_src_val_i ( ctrl_src_val ),
+    .ctrl_src_rdy_o ( ctrl_src_rdy ),
+    .ctrl_src_msg_i ( ctrl_src_msg ),
+    .ctrl_snk_val_o ( ctrl_snk_val ),
+    .ctrl_snk_rdy_i ( ctrl_snk_rdy ),
+    .ctrl_snk_msg_o ( ctrl_snk_msg ),
+
+    .data_src_val_i ( data_src_val ),
+    .data_src_rdy_o ( data_src_rdy ),
+    .data_src_msg_i ( data_src_msg ),
+    .data_snk_val_o ( data_snk_val ),
+    .data_snk_rdy_i ( data_snk_rdy ),
+    .data_snk_msg_o ( data_snk_msg )
+  );
+
+  vc_TestRandDelaySink#(
+    .p_msg_nbits ( `ASIC_CTRL_MSG_NBITS ),
+    .p_num_msgs  ( p_num_msgs           )
+  )
+  ctrl_snk
+  (
+    .clk       ( clk                ),
+    .reset     ( reset              ),
+    .max_delay ( ctrl_snk_max_delay ),
+    .val       ( ctrl_snk_val       ),
+    .rdy       ( ctrl_snk_rdy       ),
+    .msg       ( ctrl_snk_msg       ),
+    .done      ( ctrl_snk_done      )
+  );
+
+  vc_TestRandDelaySink#(
+    .p_msg_nbits ( `ASIC_DATA_SNK_MSG_NBITS ),
+    .p_num_msgs  ( p_num_msgs               )
+  )
+  data_snk
+  (
+    .clk       ( clk                ),
+    .reset     ( reset              ),
+    .max_delay ( data_snk_max_delay ),
+    .val       ( data_snk_val       ),
+    .rdy       ( data_snk_rdy       ),
+    .msg       ( data_snk_msg       ),
+    .done      ( data_snk_done      )
+  );
+
+  assign done = ctrl_src_done && ctrl_snk_done && data_src_done && data_snk_done;
+
+  `VC_TRACE_BEGIN
+  begin
+    ctrl_src.trace( trace_str );
+    vc_trace.append_str( trace_str, " || " );
+    data_src.trace( trace_str );
+    vc_trace.append_str( trace_str, " > " );
+    asic.trace( trace_str );
+    vc_trace.append_str( trace_str, " > " );
+    ctrl_snk.trace( trace_str );
+    vc_trace.append_str( trace_str, " || " );
+    data_snk.trace( trace_str );
+  end
+  `VC_TRACE_END
+
+endmodule
+
+module top;
+  `VC_TEST_SUITE_BEGIN( `VC_PREPROCESSOR_TOSTR(`ASIC_IMPL) )
+
+  logic        th_reset = 1'b1;
+  logic [31:0] th_ctrl_src_max_delay;
+  logic [31:0] th_ctrl_snk_max_delay;
+  logic [31:0] th_data_src_max_delay;
+  logic [31:0] th_data_snk_max_delay;
+  logic [11:0] th_ctrl_src_idx;
+  logic [11:0] th_ctrl_snk_idx;
+  logic [11:0] th_data_src_idx;
+  logic [11:0] th_data_snk_idx;
+  logic        th_done;
+
+  integer sim_num_cycles;
+
+  TestHarness th
+  (
+    .clk                ( clk                   ),
+    .reset              ( th_reset              ),
+    .ctrl_src_max_delay ( th_ctrl_src_max_delay ),
+    .ctrl_snk_max_delay ( th_ctrl_snk_max_delay ),
+    .data_src_max_delay ( th_data_src_max_delay ),
+    .data_snk_max_delay ( th_data_snk_max_delay ),
+    .done               ( th_done               )
+  );
+
+  task load_ctrl_src
+  (
+    input [11:0]                     i,
+    input [`ASIC_CTRL_MSG_NBITS-1:0] msg
+  );
+  begin
+    th.ctrl_src.src.m[i] = msg;
+  end
+  endtask
+
+  task load_ctrl_snk
+  (
+    input [11:0]                     i,
+    input [`ASIC_CTRL_MSG_NBITS-1:0] msg
+  );
+  begin
+    th.ctrl_snk.sink.m[i] = msg;
+  end
+  endtask
+
+  task load_data_src
+  (
+    input [11:0]                         i,
+    input [`ASIC_DATA_SRC_MSG_NBITS-1:0] msg
+  );
+  begin
+    th.data_src.src.m[i] = msg;
+  end
+  endtask
+
+  task load_data_snk
+  (
+    input [11:0]                         i,
+    input [`ASIC_DATA_SNK_MSG_NBITS-1:0] msg
+  );
+  begin
+    th.data_snk.sink.m[i] = msg;
+  end
+  endtask
+
+  task clear_streams;
+  begin
+    th_ctrl_src_idx = 12'd0;
+    th_ctrl_snk_idx = 12'd0;
+    th_data_src_idx = 12'd0;
+    th_data_snk_idx = 12'd0;
+
+    load_ctrl_src( 12'd0, {`ASIC_CTRL_MSG_NBITS{1'bx}} );
+    load_ctrl_snk( 12'd0, {`ASIC_CTRL_MSG_NBITS{1'bx}} );
+    load_data_src( 12'd0, {`ASIC_DATA_SRC_MSG_NBITS{1'bx}} );
+    load_data_snk( 12'd0, {`ASIC_DATA_SNK_MSG_NBITS{1'bx}} );
+  end
+  endtask
+
+  task init_ctrl_src
+  (
+    input [`ASIC_CTRL_MSG_NBITS-1:0] msg
+  );
+  begin
+    load_ctrl_src( th_ctrl_src_idx, msg );
+    th_ctrl_src_idx = th_ctrl_src_idx + 12'd1;
+    load_ctrl_src( th_ctrl_src_idx, {`ASIC_CTRL_MSG_NBITS{1'bx}} );
+  end
+  endtask
+
+  task init_ctrl_snk
+  (
+    input [`ASIC_CTRL_MSG_NBITS-1:0] msg
+  );
+  begin
+    load_ctrl_snk( th_ctrl_snk_idx, msg );
+    th_ctrl_snk_idx = th_ctrl_snk_idx + 12'd1;
+    load_ctrl_snk( th_ctrl_snk_idx, {`ASIC_CTRL_MSG_NBITS{1'bx}} );
+  end
+  endtask
+
+  task init_data_src
+  (
+    input [`ASIC_DATA_SRC_MSG_NBITS-1:0] msg
+  );
+  begin
+    load_data_src( th_data_src_idx, msg );
+    th_data_src_idx = th_data_src_idx + 12'd1;
+    load_data_src( th_data_src_idx, {`ASIC_DATA_SRC_MSG_NBITS{1'bx}} );
+  end
+  endtask
+
+  task init_data_snk
+  (
+    input [`ASIC_DATA_SNK_MSG_NBITS-1:0] msg
+  );
+  begin
+    load_data_snk( th_data_snk_idx, msg );
+    th_data_snk_idx = th_data_snk_idx + 12'd1;
+    load_data_snk( th_data_snk_idx, {`ASIC_DATA_SNK_MSG_NBITS{1'bx}} );
+  end
+  endtask
+
+  task init_rand_delays
+  (
+    input logic [31:0] ctrl_src_max_delay,
+    input logic [31:0] ctrl_snk_max_delay,
+    input logic [31:0] data_src_max_delay,
+    input logic [31:0] data_snk_max_delay
+  );
+  begin
+    th_ctrl_src_max_delay = ctrl_src_max_delay;
+    th_ctrl_snk_max_delay = ctrl_snk_max_delay;
+    th_data_src_max_delay = data_src_max_delay;
+    th_data_snk_max_delay = data_snk_max_delay;
+  end
+  endtask
+
+  task run_test;
+  begin
+    #1;   th_reset = 1'b1;
+    #20;  th_reset = 1'b0;
+
+    sim_num_cycles = 5000;
+
+    while ( !th_done && ( th.vc_trace.cycles < sim_num_cycles ) ) begin
+      th.display_trace();
+      #10;
+    end
+
+    `VC_TEST_NET( th_done, 1'b1 );
+  end
+  endtask
+
+  `include `ASIC_TEST_CASES_FILE
+
+  `VC_TEST_SUITE_END
+endmodule
+

@@ -3,6 +3,11 @@
 # pipes/tb/framer/gen_pipevecs_framer.py
 #=========================================================================
 # Sebastian Claudiusz Magierowski May 8 2026
+#
+# Generate Verilog include fragments for standalone pipe_framer tests. The
+# source side is raw 64-bit data, while the expected sink side is the framed
+# form { first, last, data } produced from PIPE_COUNT (total number of beats) 
+# and FRAME_LEN (number of beats per frame).
 
 from __future__ import annotations
 
