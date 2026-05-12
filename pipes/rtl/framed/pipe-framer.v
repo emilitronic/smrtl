@@ -31,7 +31,7 @@ module pipe_framer
   input  logic [31:0]              num_inputs_i,
   input  logic [31:0]              frame_len_i,
   output logic                     done_o,
-  // rawn input stream interface
+  // raw input stream interface
   input  logic                     raw_val_i,
   output logic                     raw_rdy_o,
   input  logic [p_data_nbits-1:0]  raw_msg_i,

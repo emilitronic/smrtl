@@ -23,6 +23,7 @@
 
 `include "pipe-ctrl.v"
 `include "pipe-framemeta-framer.v"
+`include "pipe-framemeta-checker.v"
 `include "pipe-framemeta-data.v"
 `ifndef SYNTHESIS
 `include "vc-trace.v"
@@ -64,6 +65,9 @@ module pipe_framemetagen01
   logic                   meta_val;
   logic                   meta_rdy;
   logic [p_msg_nbits-1:0] meta_msg;
+  logic                   checked_val;
+  logic                   checked_rdy;
+  logic [p_msg_nbits-1:0] checked_msg;
 
   pipe_ctrl ctrl
   (
@@ -107,6 +111,29 @@ module pipe_framemetagen01
     .meta_msg_o   ( meta_msg           )
   );
 
+  pipe_framemeta_checker#(
+    .p_frame_id_nbits ( p_frame_id_nbits ),
+    .p_beat_idx_nbits ( p_beat_idx_nbits ),
+    .p_data_nbits     ( p_data_nbits     )
+  )
+  meta_checker
+  (
+    .clk          ( clk                ),
+    .reset        ( reset              ),
+
+    .start_i      ( pipe_start         ),
+    .num_inputs_i ( num_inputs         ),
+    .frame_len_i  ( 32'( p_frame_len ) ),
+
+    .in_val_i     ( meta_val           ),
+    .in_rdy_o     ( meta_rdy           ),
+    .in_msg_i     ( meta_msg           ),
+
+    .out_val_o    ( checked_val        ),
+    .out_rdy_i    ( checked_rdy        ),
+    .out_msg_o    ( checked_msg        )
+  );
+
   pipe_framemeta_data#(
     .p_num_stages     ( p_num_stages     ),
     .p_frame_id_nbits ( p_frame_id_nbits ),
@@ -122,9 +149,9 @@ module pipe_framemetagen01
     .num_inputs_i   ( num_inputs     ),
     .pipe_done_o    ( pipe_done      ),
 
-    .data_src_val_i ( meta_val       ),
-    .data_src_rdy_o ( meta_rdy       ),
-    .data_src_msg_i ( meta_msg       ),
+    .data_src_val_i ( checked_val    ),
+    .data_src_rdy_o ( checked_rdy    ),
+    .data_src_msg_i ( checked_msg    ),
 
     .data_snk_val_o ( data_snk_val_o ),
     .data_snk_rdy_i ( data_snk_rdy_i ),
@@ -141,6 +168,8 @@ module pipe_framemetagen01
     ctrl.trace( trace_str );
     vc_trace.append_str( trace_str, " " );
     framer.trace( trace_str );
+    vc_trace.append_str( trace_str, " > " );
+    meta_checker.trace( trace_str );
     vc_trace.append_str( trace_str, " > " );
     data.trace( trace_str );
   end
