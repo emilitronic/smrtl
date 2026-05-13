@@ -74,7 +74,7 @@ module pipe_framemeta_checker
   assign out_msg_o = in_msg_i;
 
   assign go = in_val_i && in_rdy_o;
-
+  // checker's locally reconstructed state
   assign expected_first    = ( frame_idx_reg == 32'd0 );
   assign expected_last     = ( frame_idx_reg + 32'd1 == frame_len_reg ) ||
                              ( total_idx_reg + 32'd1 == num_inputs_reg );
