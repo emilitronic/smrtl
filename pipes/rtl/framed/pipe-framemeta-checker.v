@@ -11,6 +11,8 @@
 
   The reconstructed position is compared against the carried metadata during
   simulation only. Functional logic must not depend on the carried metadata.
+
+  What's the point?  When the checker follows some block
 */
 
 `ifndef PIPE_FRAMEMETA_CHECKER_V
