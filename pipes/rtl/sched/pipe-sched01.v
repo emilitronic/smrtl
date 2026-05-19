@@ -97,16 +97,6 @@ module pipe_sched01
   logic        mem_write_en;
   logic [3:0]  mem_write_idx;
 
-  function logic [15:0] make_tuple
-  (
-    input logic [7:0] x,
-    input logic [7:0] y
-  );
-  begin
-    make_tuple = { x, y };
-  end
-  endfunction
-
   function logic [1:0] combine_status2
   (
     input logic [1:0] in0_status,
@@ -246,7 +236,9 @@ module pipe_sched01
       next_value[c_reg_r1]  = 16'b0;
     end
 
-    // Main pipeline. Stage results are computed from pre-edge register values.
+    // Main pipeline. These values are internally generated pipeline results,
+    // not external LPV input beats. Stage results are computed from pre-edge
+    // register values.
 
     next_status[c_reg_r2] = combine_status2( reg_status[c_reg_a], reg_status[c_reg_r1] );
     next_value[c_reg_r2]  = p1_result( reg_value[c_reg_a], reg_value[c_reg_r1] );
