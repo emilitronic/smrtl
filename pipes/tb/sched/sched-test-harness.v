@@ -39,6 +39,9 @@ module top;
   logic [7:0]  dut_dbg_k;
   logic [2*c_num_regs-1:0]  dut_status_bus;
   logic [16*c_num_regs-1:0] dut_value_bus;
+  logic        lpv_val;
+  logic        lpv_rdy;
+  logic [15:0] lpv_msg;
 
   logic [1:0]  dut_status [0:c_num_regs-1];
   logic [15:0] dut_value  [0:c_num_regs-1];
@@ -85,6 +88,9 @@ module top;
     .clk          ( clk            ),
     .reset        ( reset          ),
     .advance_i    ( advance        ),
+    .lpv_val_i    ( lpv_val        ),
+    .lpv_rdy_o    ( lpv_rdy        ),
+    .lpv_msg_i    ( lpv_msg        ),
     .done_o       ( dut_done       ),
     .dbg_i_o      ( dut_dbg_i      ),
     .dbg_k_o      ( dut_dbg_k      ),
@@ -173,11 +179,14 @@ module top;
 
     reset = 1'b1;
     advance = 1'b0;
+    lpv_val = 1'b1;
+    lpv_msg = 16'b0;
     @( posedge clk );
     #1;
     reset = 1'b0;
 
     for ( row_idx = 0; row_idx < sched_trace_nrows; row_idx = row_idx + 1 ) begin
+      lpv_msg = { sched_trace_i[row_idx], sched_trace_k[row_idx] };
       advance = 1'b1;
       @( posedge clk );
       #1;

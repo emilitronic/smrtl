@@ -42,6 +42,10 @@ module pipe_sched01
   input  logic                       reset,
   input  logic                       advance_i,
 
+  input  logic                       lpv_val_i,
+  output logic                       lpv_rdy_o,
+  input  logic [15:0]                lpv_msg_i,
+
   output logic                       done_o,
   output logic [7:0]                 dbg_i_o,
   output logic [7:0]                 dbg_k_o,
@@ -84,6 +88,7 @@ module pipe_sched01
   logic [1:0]  next_r0_status;
   logic        real_frame;
   logic        drain_epoch;
+  logic        needs_input;
   logic        mem_write_en;
   logic [3:0]  mem_write_idx;
 
@@ -164,6 +169,7 @@ module pipe_sched01
   always @(*) begin
     real_frame   = ( epoch_i_reg <= p_last_frame[7:0] );
     drain_epoch  = ( epoch_i_reg == ( p_last_frame[7:0] + 8'd1 ) );
+    needs_input  = real_frame;
 
     for ( r = 0; r < p_num_regs; r = r + 1 ) begin
       next_status[r] = reg_status[r];
@@ -360,6 +366,7 @@ module pipe_sched01
   assign dbg_i_o = epoch_i_reg;
   assign dbg_k_o = epoch_k_reg;
   assign done_o  = done_reg;
+  assign lpv_rdy_o = advance_i && needs_input && !done_reg;
 
 endmodule
 
