@@ -8,7 +8,7 @@ EXE      ?= $(EXE_DIR)/sched-exe
 
 VC_DIR   := ../../../lib/vc
 
-INCLUDES := -I $(VC_DIR) -I .
+INCLUDES := -I $(VC_DIR) -I ../../rtl/sched -I .
 SRC_TOP  := sched.t.v
 RUN_ARGS ?= +test-case=1
 TRACE_TSV ?= traces/trace_6frames.tsv
@@ -61,4 +61,3 @@ debug: build
 clean:
 	rm -f $(EXE_DIR)/sched-exe
 	rm -rf $(GEN_DIR)
-

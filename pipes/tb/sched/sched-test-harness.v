@@ -32,8 +32,13 @@ module top;
 
   logic        reset = 1'b1;
   logic        advance = 1'b0;
-  integer      replay_row;
   integer      check_errors;
+
+  logic        dut_done;
+  logic [7:0]  dut_dbg_i;
+  logic [7:0]  dut_dbg_k;
+  logic [2*c_num_regs-1:0]  dut_status_bus;
+  logic [16*c_num_regs-1:0] dut_value_bus;
 
   logic [1:0]  dut_status [0:c_num_regs-1];
   logic [15:0] dut_value  [0:c_num_regs-1];
@@ -72,30 +77,28 @@ module top;
   endfunction
 
   //----------------------------------------------------------------------
-  // Replay Stub
+  // DUT
   //----------------------------------------------------------------------
-  // This is deliberately not the real DUT. It simply updates debug register
-  // outputs from the expected trace rows, so the harness and oracle format can
-  // be validated before the schedule RTL exists.
 
-  integer r;
+  pipe_sched01 dut
+  (
+    .clk          ( clk            ),
+    .reset        ( reset          ),
+    .advance_i    ( advance        ),
+    .done_o       ( dut_done       ),
+    .dbg_i_o      ( dut_dbg_i      ),
+    .dbg_k_o      ( dut_dbg_k      ),
+    .dbg_status_o ( dut_status_bus ),
+    .dbg_value_o  ( dut_value_bus  )
+  );
 
-  always @( posedge clk ) begin
-    if ( reset ) begin
-      replay_row <= 0;
-      for ( r = 0; r < c_num_regs; r = r + 1 ) begin
-        dut_status[r] <= c_status_x;
-        dut_value[r]  <= 16'b0;
-      end
+  genvar g;
+  generate
+    for ( g = 0; g < c_num_regs; g = g + 1 ) begin : MAP_DUT_DBG
+      assign dut_status[g] = dut_status_bus[(2*g)+1:(2*g)];
+      assign dut_value[g]  = dut_value_bus[(16*g)+15:(16*g)];
     end
-    else if ( advance && ( replay_row < sched_trace_nrows ) ) begin
-      for ( r = 0; r < c_num_regs; r = r + 1 ) begin
-        dut_status[r] <= sched_trace_status[replay_row][r];
-        dut_value[r]  <= sched_trace_value[replay_row][r];
-      end
-      replay_row <= replay_row + 1;
-    end
-  end
+  endgenerate
 
   //----------------------------------------------------------------------
   // Check Tasks
@@ -160,9 +163,9 @@ module top;
   end
   endtask
 
-  // Load the generated oracle and replay it through the temporary stub DUT.
-  // This validates the checker mechanics before real schedule RTL exists.
-  task run_trace_replay;
+  // Load the generated oracle, run the schedule RTL one advance per oracle
+  // row, and compare the DUT debug registers after each accepting edge.
+  task run_trace_check;
     integer row_idx;
   begin
     init_sched_trace();
@@ -182,7 +185,7 @@ module top;
     end
 
     advance = 1'b0;
-    `VC_TEST_NET( replay_row, sched_trace_nrows );
+    `VC_TEST_NET( dut_done, 1'b1 );
     `VC_TEST_NET( check_errors, 0 );
   end
   endtask
@@ -191,9 +194,9 @@ module top;
   // Tests
   //----------------------------------------------------------------------
 
-  `VC_TEST_CASE_BEGIN( 1, "load and replay schedule trace oracle" )
+  `VC_TEST_CASE_BEGIN( 1, "schedule RTL matches trace oracle" )
   begin
-    run_trace_replay();
+    run_trace_check();
   end
   `VC_TEST_CASE_END
 
