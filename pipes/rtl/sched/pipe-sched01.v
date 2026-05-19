@@ -194,7 +194,7 @@ module pipe_sched01
     end
     else if ( real_frame && ( epoch_k_reg == 8'd0 ) ) begin
       next_status[c_reg_a] = c_status_v;
-      next_value[c_reg_a]  = make_tuple( epoch_i_reg, 8'd0 );
+      next_value[c_reg_a]  = lpv_msg_i;
     end
     else if ( drain_epoch && ( epoch_k_reg == 8'd0 ) ) begin
       next_status[c_reg_a] = c_status_i;
@@ -214,7 +214,7 @@ module pipe_sched01
       end
       else begin
         next_r0_status = c_status_v;
-        next_r0_value  = make_tuple( 8'd0, epoch_k_reg );
+        next_r0_value  = lpv_msg_i;
       end
     end
     else begin
@@ -274,7 +274,7 @@ module pipe_sched01
 
     if ( real_frame && ( epoch_i_reg > 8'd0 ) && ( epoch_k_reg > 8'd0 ) ) begin
       next_status[c_reg_d2] = c_status_v;
-      next_value[c_reg_d2]  = make_tuple( epoch_i_reg, epoch_k_reg );
+      next_value[c_reg_d2]  = lpv_msg_i;
     end
     else begin
       next_status[c_reg_d2] = c_status_i;
