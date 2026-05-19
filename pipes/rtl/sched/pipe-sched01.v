@@ -47,6 +47,7 @@ module pipe_sched01
   input  logic [15:0]                lpv_msg_i,
 
   output logic                       done_o,
+  output logic                       dbg_advance_o,
   output logic [7:0]                 dbg_i_o,
   output logic [7:0]                 dbg_k_o,
   output logic [2*p_num_regs-1:0]    dbg_status_o,
@@ -77,6 +78,7 @@ module pipe_sched01
   logic [7:0]  epoch_i_reg;
   logic [7:0]  epoch_k_reg;
   logic        done_reg;
+  logic        dbg_advance_reg;
 
   logic [1:0]  reg_status [0:p_num_regs-1];
   logic [15:0] reg_value  [0:p_num_regs-1];
@@ -89,6 +91,9 @@ module pipe_sched01
   logic        real_frame;
   logic        drain_epoch;
   logic        needs_input;
+  logic        real_go;
+  logic        drain_go;
+  logic        pipe_go;
   logic        mem_write_en;
   logic [3:0]  mem_write_idx;
 
@@ -170,6 +175,9 @@ module pipe_sched01
     real_frame   = ( epoch_i_reg <= p_last_frame[7:0] );
     drain_epoch  = ( epoch_i_reg == ( p_last_frame[7:0] + 8'd1 ) );
     needs_input  = real_frame;
+    real_go      = needs_input && lpv_val_i && lpv_rdy_o;
+    drain_go     = !needs_input && advance_i && !done_reg;
+    pipe_go      = real_go || drain_go;
 
     for ( r = 0; r < p_num_regs; r = r + 1 ) begin
       next_status[r] = reg_status[r];
@@ -303,6 +311,7 @@ module pipe_sched01
       epoch_i_reg <= 8'd0;
       epoch_k_reg <= 8'd0;
       done_reg    <= 1'b0;
+      dbg_advance_reg <= 1'b0;
 
       for ( r = 0; r < p_num_regs; r = r + 1 ) begin
         reg_status[r] <= c_status_x;
@@ -313,7 +322,9 @@ module pipe_sched01
         mem_value[r] <= 16'b0;
       end
     end
-    else if ( advance_i && !done_reg ) begin
+    else if ( pipe_go && !done_reg ) begin
+      dbg_advance_reg <= 1'b1;
+
       for ( r = 0; r < p_num_regs; r = r + 1 ) begin
         reg_status[r] <= next_status[r];
         reg_value[r]  <= next_value[r];
@@ -353,6 +364,9 @@ module pipe_sched01
         epoch_k_reg <= epoch_k_reg + 8'd1;
       end
     end
+    else begin
+      dbg_advance_reg <= 1'b0;
+    end
   end
 
   genvar g;
@@ -366,6 +380,7 @@ module pipe_sched01
   assign dbg_i_o = epoch_i_reg;
   assign dbg_k_o = epoch_k_reg;
   assign done_o  = done_reg;
+  assign dbg_advance_o = dbg_advance_reg;
   assign lpv_rdy_o = advance_i && needs_input && !done_reg;
 
 endmodule

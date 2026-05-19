@@ -35,6 +35,7 @@ module top;
   integer      check_errors;
 
   logic        dut_done;
+  logic        dut_advance;
   logic [7:0]  dut_dbg_i;
   logic [7:0]  dut_dbg_k;
   logic [2*c_num_regs-1:0]  dut_status_bus;
@@ -92,6 +93,7 @@ module top;
     .lpv_rdy_o    ( lpv_rdy        ),
     .lpv_msg_i    ( lpv_msg        ),
     .done_o       ( dut_done       ),
+    .dbg_advance_o( dut_advance    ),
     .dbg_i_o      ( dut_dbg_i      ),
     .dbg_k_o      ( dut_dbg_k      ),
     .dbg_status_o ( dut_status_bus ),
@@ -171,7 +173,23 @@ module top;
 
   // Load the generated oracle, run the schedule RTL one advance per oracle
   // row, and compare the DUT debug registers after each accepting edge.
-  task run_trace_check;
+  function logic should_stall_input
+  (
+    input integer row_idx,
+    input integer stall_mode
+  );
+  begin
+    if ( stall_mode == 0 )
+      should_stall_input = 1'b0;
+    else
+      should_stall_input = ( row_idx == 7 ) || ( row_idx == 23 ) || ( row_idx == 58 );
+  end
+  endfunction
+
+  task run_trace_check
+  (
+    input integer stall_mode
+  );
     integer row_idx;
   begin
     init_sched_trace();
@@ -188,12 +206,23 @@ module top;
     for ( row_idx = 0; row_idx < sched_trace_nrows; row_idx = row_idx + 1 ) begin
       lpv_msg = { sched_trace_i[row_idx], sched_trace_k[row_idx] };
       advance = 1'b1;
+
+      if ( should_stall_input( row_idx, stall_mode ) && ( sched_trace_i[row_idx] <= 8'd5 ) ) begin
+        lpv_val = 1'b0;
+        @( posedge clk );
+        #1;
+        `VC_TEST_NET( dut_advance, 1'b0 );
+      end
+
+      lpv_val = 1'b1;
       @( posedge clk );
       #1;
+      `VC_TEST_NET( dut_advance, 1'b1 );
       check_sched_row( row_idx );
     end
 
     advance = 1'b0;
+    lpv_val = 1'b0;
     `VC_TEST_NET( dut_done, 1'b1 );
     `VC_TEST_NET( check_errors, 0 );
   end
@@ -205,7 +234,13 @@ module top;
 
   `VC_TEST_CASE_BEGIN( 1, "schedule RTL matches trace oracle" )
   begin
-    run_trace_check();
+    run_trace_check( 0 );
+  end
+  `VC_TEST_CASE_END
+
+  `VC_TEST_CASE_BEGIN( 2, "schedule RTL holds on LPV input stalls" )
+  begin
+    run_trace_check( 1 );
   end
   `VC_TEST_CASE_END
 
