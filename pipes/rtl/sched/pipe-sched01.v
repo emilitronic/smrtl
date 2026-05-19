@@ -3,10 +3,11 @@
 //========================================================================
 // Sebastian Claudiusz Magierowski May 18 2026
 /*
-  Schedule-faithful miniature pipe.
+  Schedule-faithful miniature pipe reference model.
 
-  This module is intentionally a control/schedule model, not the final target
-  computation. It has the same traced register shape as the target pipeline:
+  This module is intentionally a compact control/schedule model, not the final
+  structural RTL implementation and not the final target computation. It has
+  the same traced register shape as the target pipeline:
 
     A
     R0..R8
@@ -19,6 +20,14 @@
     0: X / unconstrained
     1: I / invalid
     2: V / valid tuple
+
+  Implementation note:
+
+  This version models the pipe procedurally. The traced registers are stored in
+  arrays, and most next-state behavior is computed in one `always @(*)` block.
+  This makes `pipe_sched01` useful as an executable schedule reference, but it
+  deliberately does not expose the register-by-register structure as clearly as
+  the future structural implementation should.
 */
 
 `ifndef PIPE_SCHED01_V
