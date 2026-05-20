@@ -111,6 +111,10 @@ module top;
   //----------------------------------------------------------------------
   // Check Tasks
   //----------------------------------------------------------------------
+  // These tasks are the stable trace-oracle interface for the schedule
+  // miniature. Future implementations, such as a structural pipe_sched02,
+  // should expose equivalent debug register status/value outputs and reuse
+  // this checker against the same TSV-derived oracle.
 
   // Compare one DUT debug register against one oracle cell. The oracle cell
   // can be unconstrained (X), invalid (I), or a valid 16-bit tuple value.
@@ -186,6 +190,33 @@ module top;
   end
   endfunction
 
+  // Does this trace row correspond to a real LPV input beat? (i.e., its not a drain row)
+  function logic row_needs_lpv
+  (
+    input integer row_idx
+  );
+  begin
+    row_needs_lpv = ( sched_trace_i[row_idx] <= 8'd5 );
+  end
+  endfunction
+
+  // Drives the LPV input port for the current trace row (drives val/msg for that row)
+  task drive_lpv_row
+  (
+    input integer row_idx
+  );
+  begin
+    if ( row_needs_lpv( row_idx ) ) begin
+      lpv_val = 1'b1;
+      lpv_msg = { sched_trace_i[row_idx], sched_trace_k[row_idx] };
+    end
+    else begin
+      lpv_val = 1'b0;
+      lpv_msg = 16'b0;
+    end
+  end
+  endtask
+
   task run_trace_check
   (
     input integer stall_mode
@@ -197,24 +228,24 @@ module top;
 
     reset = 1'b1;
     advance = 1'b0;
-    lpv_val = 1'b1;
+    lpv_val = 1'b0;
     lpv_msg = 16'b0;
     @( posedge clk );
     #1;
     reset = 1'b0;
 
     for ( row_idx = 0; row_idx < sched_trace_nrows; row_idx = row_idx + 1 ) begin
-      lpv_msg = { sched_trace_i[row_idx], sched_trace_k[row_idx] };
       advance = 1'b1;
+      drive_lpv_row( row_idx );
 
-      if ( should_stall_input( row_idx, stall_mode ) && ( sched_trace_i[row_idx] <= 8'd5 ) ) begin
+      if ( should_stall_input( row_idx, stall_mode ) && row_needs_lpv( row_idx ) ) begin
         lpv_val = 1'b0;
         @( posedge clk );
         #1;
         `VC_TEST_NET( dut_advance, 1'b0 );
+        drive_lpv_row( row_idx );
       end
 
-      lpv_val = 1'b1;
       @( posedge clk );
       #1;
       `VC_TEST_NET( dut_advance, 1'b1 );
